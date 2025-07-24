@@ -11,9 +11,13 @@
 - Never use CSS inline styles. Always use a CSS file.
 - When creating Web API projects, prefer minimal APIs project.
 
+## Creating service classes
+- Services should be placed in the 'Services' folder.
+- All services must have an interface.
+- Interfaces should be placed in the 'Interfaces' folder.
 
 ## Testing Guidelines
 - use xUnit for unit tests
-- use FluentAssertions version 7.1 for assertions
+- use FluentAssertions version 7.2 for assertions
 - Use Moq for mocking
 
