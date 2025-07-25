@@ -1,4 +1,4 @@
-namespace SK.Rag.Application.DocumentLoaders.Interfaces;
+namespace SK.Rag.Application.Services.Interfaces;
 
 public interface IDocumentService
 {

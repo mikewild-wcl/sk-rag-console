@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using SK.Rag.Application.DocumentLoaders.Interfaces;
+using SK.Rag.Application.Services.Interfaces;
 
 namespace SK.Rag.Application.DocumentLoaders;
 
