@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using SK.Rag.Application.Services.Interfaces;
+using SK.Rag.Application.DocumentLoaders.Interfaces;
 
-namespace SK.Rag.Application.Services;
+namespace SK.Rag.Application.DocumentLoaders;
 
 public class ChatService(
     ILogger<ChatService> logger) : IChatService

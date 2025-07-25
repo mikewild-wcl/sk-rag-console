@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SK.Rag.Application.Services.Interfaces;
+namespace SK.Rag.Application.DocumentLoaders.Interfaces;
 
 public interface IChatService
 {

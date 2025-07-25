@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using SK.Rag.Application.Services;
+using SK.Rag.Application.DocumentLoaders;
 
 namespace SK.Rag.Application.UnitTests.Builders
 {
