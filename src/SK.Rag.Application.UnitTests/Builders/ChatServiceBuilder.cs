@@ -10,6 +10,6 @@ public static class ChatServiceBuilder
     public static ChatService Build(
         Kernel? kernel = null,
         ILogger<ChatService>? logger = null) =>
-        new(// kernel ?? new Kernel(),
+        new(kernel ?? new Kernel(),
             logger ?? new NullLogger<ChatService>());
 }

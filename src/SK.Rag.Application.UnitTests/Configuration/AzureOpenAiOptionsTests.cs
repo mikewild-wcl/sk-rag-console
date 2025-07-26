@@ -15,7 +15,7 @@ public class AzureOpenAiOptionsTests
         var embeddingDeploymentName = "embedding";
 
         // Act
-        var options = new AzureOpenAiOptions(apiKey, endpoint, deploymentName, embeddingDeploymentName);
+        var options = new AzureOpenAIOptions(apiKey, endpoint, deploymentName, embeddingDeploymentName);
 
         // Assert
         options.ApiKey.Should().Be(apiKey);
@@ -36,7 +36,7 @@ public class AzureOpenAiOptionsTests
         var timeout = 1001;
 
         // Act
-        var options = AzureOpenAiOptionsBuilder.Build(
+        var options = AzureOpenAIOptionsBuilder.Build(
             apiKey,
             endpoint,
             deploymentName,
@@ -61,7 +61,7 @@ public class AzureOpenAiOptionsTests
         var embeddingDeploymentName = "embedding";
         var timeout = 100;
 
-        var options = AzureOpenAiOptionsBuilder.Build();
+        var options = AzureOpenAIOptionsBuilder.Build();
 
         // Act
         options = options with
@@ -85,7 +85,7 @@ public class AzureOpenAiOptionsTests
     public void Timeout_CanBeSetViaInit()
     {
         // Arrange
-        var options = new AzureOpenAiOptions("a", "b", "c", "d") { Timeout = 99 };
+        var options = new AzureOpenAIOptions("a", "b", "c", "d") { Timeout = 99 };
 
         // Assert
         options.Timeout.Should().Be(99);

@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
+using SK.Rag.Application.Services;
 using SK.Rag.Application.Services.Interfaces;
 using System.CommandLine;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Commands;
 
 public class DocumentServiceCommand : Command
-        //: base("hello", "Prints a hello world message.")
+//: base("hello", "Prints a hello world message.")
 {
     private readonly IDocumentService _documentService;
     private readonly ILogger<DocumentServiceCommand> _logger;
@@ -15,6 +16,9 @@ public class DocumentServiceCommand : Command
         ILogger<DocumentServiceCommand> logger)
         : base("services", "Prints a hello world message.")
     {
+        _documentService = documentService ?? throw new ArgumentNullException(nameof(documentService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         Aliases.Add("svc");
 
         SetAction(ExecuteAction);
@@ -27,6 +31,6 @@ public class DocumentServiceCommand : Command
     {
         _logger.LogInformation("Executing HelloWithServiceCommand");
         await _documentService.List();
-        Console.WriteLine("Hello, World!");
+        Console.WriteLine("Hello, Documents World!");
     }
 }

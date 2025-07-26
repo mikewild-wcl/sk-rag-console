@@ -2,7 +2,7 @@
 
 namespace SK.Rag.Application.UnitTests.Builders;
 
-public static class AzureOpenAiOptionsBuilder
+public static class AzureOpenAIOptionsBuilder
 {
     private const string DefaultApiKey = "TEST_API_KEY";
     private const string DefaultEndpoint = "https://openai.openai.azure.com/ https://test.connect.tlevels.gov.uk/";
@@ -10,7 +10,7 @@ public static class AzureOpenAiOptionsBuilder
     private const string DefaultEmbeddingDeploymentName = "test_embedding_deployment";
     private const int DefaultTimeout = 30;
 
-    public static AzureOpenAiOptions Build(
+    public static AzureOpenAIOptions Build(
         string apiKey = DefaultApiKey,
         string endpoint = DefaultEndpoint,
         string deploymentName = DefaultDeploymentName,

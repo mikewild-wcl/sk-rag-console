@@ -1,18 +1,40 @@
-﻿using SK.Rag.CommandLine.ConsoleApp.Commands;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using SK.Rag.Application.Configuration;
+using SK.Rag.Application.Services;
+using SK.Rag.Application.Services.Interfaces;
+using SK.Rag.CommandLine.ConsoleApp.Commands;
+using SK.Rag.CommandLine.ConsoleApp.Extensions;
 using System;
 using System.CommandLine;
-//using System.CommandLine.Hosting;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 
 // Look into this - https://endjin.com/blog/2020/09/simple-pattern-for-using-system-commandline-with-dependency-injection
 // https://learn.microsoft.com/en-us/dotnet/standard/commandline/migration-guide-2.0.0-beta5
 
+var builder = Host.CreateApplicationBuilder();
+
+builder.Services
+    .ConfigureOptions(builder.Configuration)
+    .AddLogging(l => l.AddConsole())
+    .AddServices()
+    .AddClients()
+    .AddSemanticKernel();
+
+var config = BuildParser(builder.Services);
+
+var host = builder.Build();
+
 Option<FileInfo> fileOption = new("--file")
 {
     Description = "The file to read and display on the console."
 };
 
+/*
 Command chatCommand = new("chat", "Start an interactive chat session");
 chatCommand.SetAction((ParseResult parseResult) =>
 {
@@ -94,8 +116,11 @@ foreach (var parseError in parseResult.Errors)
 //var builder = new CommandLineBuilder 
 
 //var result = await parseResult.InvokeAsync();
+*/
 
-var config = new CommandLineConfiguration(rootCommand);
+//var config = new CommandLineConfiguration(rootCommand);
+
+
 var commandResult = await config.InvokeAsync(args);
 
 return commandResult;
@@ -108,4 +133,29 @@ static void ReadFile(FileInfo file)
     {
         Console.WriteLine(line);
     }
+}
+
+//static CommandLineConfiguration BuildParser(ServiceProvider serviceProvider)
+static CommandLineConfiguration BuildParser(IServiceCollection services)
+{
+    services.AddScoped<DocumentServiceCommand>();
+
+    var serviceProvider = services.BuildServiceProvider();
+
+    RootCommand rootCommand = new("Sample app for System.CommandLine")
+    {
+        //fileOption
+        Subcommands =
+        {
+            new HelloCommand(),
+            serviceProvider.GetRequiredService<DocumentServiceCommand>()
+            //new DocumentServiceCommand(
+            //    serviceProvider.GetRequiredService<IDocumentService>(),
+            //    serviceProvider.GetRequiredService<ILogger<DocumentServiceCommand>>())
+        }
+    };
+
+    var config = new CommandLineConfiguration(rootCommand);
+
+    return config;
 }
