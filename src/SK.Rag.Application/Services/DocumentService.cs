@@ -9,7 +9,7 @@ public class DocumentService(
     private readonly ILogger<DocumentService> _logger = logger;
     private readonly List<string> _documents = [];
 
-    public async Task<bool> IngestAsync(string documentName)
+    public async Task<bool> Ingest(string documentName)
     {
         _logger.LogInformation("Ingesting document '{DocumentName}'", documentName);
         
@@ -30,7 +30,7 @@ public class DocumentService(
         return await Task.FromResult(true);
     }
 
-    public async Task<bool> DeleteAsync(string documentName)
+    public async Task<bool> Delete(string documentName)
     {
         _logger.LogInformation("Deleting document '{DocumentName}'", documentName);
         
@@ -53,7 +53,7 @@ public class DocumentService(
         return await Task.FromResult(removed);
     }
 
-    public async Task<IEnumerable<string>> ListAsync()
+    public async Task<IEnumerable<string>> List()
     {
         _logger.LogInformation("Listing all documents. Count: {Count}", _documents.Count);
         return await Task.FromResult(_documents.AsReadOnly());

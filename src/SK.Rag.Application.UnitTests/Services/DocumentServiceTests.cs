@@ -16,130 +16,130 @@ public class DocumentServiceTests
     }
 
     [Fact]
-    public async Task IngestAsync_WithValidDocumentName_ShouldReturnTrue()
+    public async Task Ingest_WithValidDocumentName_ShouldReturnTrue()
     {
         // Arrange
         var documentName = "test-document.pdf";
 
         // Act
-        var result = await _documentService.IngestAsync(documentName);
+        var result = await _documentService.Ingest(documentName);
 
         // Assert
         result.Should().BeTrue();
     }
 
     [Fact]
-    public async Task IngestAsync_WithNullDocumentName_ShouldReturnFalse()
+    public async Task Ingest_WithNullDocumentName_ShouldReturnFalse()
     {
         // Act
-        var result = await _documentService.IngestAsync(null!);
+        var result = await _documentService.Ingest(null!);
 
         // Assert
         result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task IngestAsync_WithEmptyDocumentName_ShouldReturnFalse()
+    public async Task Ingest_WithEmptyDocumentName_ShouldReturnFalse()
     {
         // Act
-        var result = await _documentService.IngestAsync("");
+        var result = await _documentService.Ingest("");
 
         // Assert
         result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task IngestAsync_WithWhitespaceDocumentName_ShouldReturnFalse()
+    public async Task Ingest_WithWhitespaceDocumentName_ShouldReturnFalse()
     {
         // Act
-        var result = await _documentService.IngestAsync("   ");
+        var result = await _documentService.Ingest("   ");
 
         // Assert
         result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task IngestAsync_WithDuplicateDocumentName_ShouldReturnFalse()
+    public async Task Ingest_WithDuplicateDocumentName_ShouldReturnFalse()
     {
         // Arrange
         var documentName = "duplicate-document.pdf";
-        await _documentService.IngestAsync(documentName);
+        await _documentService.Ingest(documentName);
 
         // Act
-        var result = await _documentService.IngestAsync(documentName);
+        var result = await _documentService.Ingest(documentName);
 
         // Assert
         result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task DeleteAsync_WithExistingDocument_ShouldReturnTrue()
+    public async Task Delete_WithExistingDocument_ShouldReturnTrue()
     {
         // Arrange
         var documentName = "existing-document.pdf";
-        await _documentService.IngestAsync(documentName);
+        await _documentService.Ingest(documentName);
 
         // Act
-        var result = await _documentService.DeleteAsync(documentName);
+        var result = await _documentService.Delete(documentName);
 
         // Assert
         result.Should().BeTrue();
     }
 
     [Fact]
-    public async Task DeleteAsync_WithNonExistingDocument_ShouldReturnFalse()
+    public async Task Delete_WithNonExistingDocument_ShouldReturnFalse()
     {
         // Act
-        var result = await _documentService.DeleteAsync("non-existing-document.pdf");
+        var result = await _documentService.Delete("non-existing-document.pdf");
 
         // Assert
         result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task DeleteAsync_WithNullDocumentName_ShouldReturnFalse()
+    public async Task Delete_WithNullDocumentName_ShouldReturnFalse()
     {
         // Act
-        var result = await _documentService.DeleteAsync(null!);
+        var result = await _documentService.Delete(null!);
 
         // Assert
         result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task DeleteAsync_WithEmptyDocumentName_ShouldReturnFalse()
+    public async Task Delete_WithEmptyDocumentName_ShouldReturnFalse()
     {
         // Act
-        var result = await _documentService.DeleteAsync("");
+        var result = await _documentService.Delete("");
 
         // Assert
         result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task ListAsync_WithNoDocuments_ShouldReturnEmptyCollection()
+    public async Task List_WithNoDocuments_ShouldReturnEmptyCollection()
     {
         // Act
-        var result = await _documentService.ListAsync();
+        var result = await _documentService.List();
 
         // Assert
         result.Should().BeEmpty();
     }
 
     [Fact]
-    public async Task ListAsync_WithMultipleDocuments_ShouldReturnAllDocuments()
+    public async Task List_WithMultipleDocuments_ShouldReturnAllDocuments()
     {
         // Arrange
         var document1 = "document1.pdf";
         var document2 = "document2.pdf";
         var document3 = "document3.pdf";
         
-        await _documentService.IngestAsync(document1);
-        await _documentService.IngestAsync(document2);
-        await _documentService.IngestAsync(document3);
+        await _documentService.Ingest(document1);
+        await _documentService.Ingest(document2);
+        await _documentService.Ingest(document3);
 
         // Act
-        var result = await _documentService.ListAsync();
+        var result = await _documentService.List();
 
         // Assert
         result.Should().HaveCount(3);
@@ -149,18 +149,18 @@ public class DocumentServiceTests
     }
 
     [Fact]
-    public async Task ListAsync_AfterDeletingDocument_ShouldNotContainDeletedDocument()
+    public async Task List_AfterDeletingDocument_ShouldNotContainDeletedDocument()
     {
         // Arrange
         var document1 = "document1.pdf";
         var document2 = "document2.pdf";
         
-        await _documentService.IngestAsync(document1);
-        await _documentService.IngestAsync(document2);
-        await _documentService.DeleteAsync(document1);
+        await _documentService.Ingest(document1);
+        await _documentService.Ingest(document2);
+        await _documentService.Delete(document1);
 
         // Act
-        var result = await _documentService.ListAsync();
+        var result = await _documentService.List();
 
         // Assert
         result.Should().HaveCount(1);
@@ -169,13 +169,13 @@ public class DocumentServiceTests
     }
 
     [Fact]
-    public async Task IngestAsync_ShouldLogInformation()
+    public async Task Ingest_ShouldLogInformation()
     {
         // Arrange
         var documentName = "test-document.pdf";
 
         // Act
-        await _documentService.IngestAsync(documentName);
+        await _documentService.Ingest(documentName);
 
         // Assert
         _mockLogger.Verify(
@@ -189,14 +189,14 @@ public class DocumentServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_ShouldLogInformation()
+    public async Task Delete_ShouldLogInformation()
     {
         // Arrange
         var documentName = "test-document.pdf";
-        await _documentService.IngestAsync(documentName);
+        await _documentService.Ingest(documentName);
 
         // Act
-        await _documentService.DeleteAsync(documentName);
+        await _documentService.Delete(documentName);
 
         // Assert
         _mockLogger.Verify(

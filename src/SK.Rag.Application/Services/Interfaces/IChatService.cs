@@ -2,5 +2,5 @@
 
 public interface IChatService
 {
-    public Task<string> ChatAsync(string prompt);
+    public Task<string> Chat(string prompt);
 }

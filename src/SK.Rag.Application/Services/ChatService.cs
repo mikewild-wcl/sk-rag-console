@@ -8,7 +8,7 @@ public class ChatService(
 {
     private readonly ILogger<ChatService> _logger = logger;
 
-    public async Task<string> ChatAsync(string prompt)
+    public async Task<string> Chat(string prompt)
     {
         _logger.LogInformation("Chat called with prompt '{Prompt}'", prompt);
 

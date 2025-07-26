@@ -21,13 +21,13 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_WithValidPrompt_ShouldReturnResponse()
+    public async Task _WithValidPrompt_ShouldReturnResponse()
     {
         // Arrange
         var prompt = "Hello, how are you?";
 
         // Act
-        var result = await _chatService.ChatAsync(prompt);
+        var result = await _chatService.Chat(prompt);
 
         // Assert
         result.Should().NotBeNullOrEmpty();
@@ -35,13 +35,13 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_WithEmptyPrompt_ShouldReturnResponse()
+    public async Task _WithEmptyPrompt_ShouldReturnResponse()
     {
         // Arrange
         var prompt = "";
 
         // Act
-        var result = await _chatService.ChatAsync(prompt);
+        var result = await _chatService.Chat(prompt);
 
         // Assert
         result.Should().NotBeNullOrEmpty();
@@ -49,10 +49,10 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_WithNullPrompt_ShouldReturnResponse()
+    public async Task _WithNullPrompt_ShouldReturnResponse()
     {
         // Act
-        var result = await _chatService.ChatAsync(null!);
+        var result = await _chatService.Chat(null!);
 
         // Assert
         result.Should().NotBeNullOrEmpty();
@@ -60,13 +60,13 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_WithWhitespacePrompt_ShouldReturnResponse()
+    public async Task _WithWhitespacePrompt_ShouldReturnResponse()
     {
         // Arrange
         var prompt = "   ";
 
         // Act
-        var result = await _chatService.ChatAsync(prompt);
+        var result = await _chatService.Chat(prompt);
 
         // Assert
         result.Should().NotBeNullOrEmpty();
@@ -74,14 +74,14 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_WithLongPrompt_ShouldReturnResponse()
+    public async Task _WithLongPrompt_ShouldReturnResponse()
     {
         // Arrange
         var prompt = "This is a very long prompt that contains multiple sentences and should still work correctly. " +
                     "The service should handle long prompts gracefully and return the expected mock response.";
 
         // Act
-        var result = await _chatService.ChatAsync(prompt);
+        var result = await _chatService.Chat(prompt);
 
         // Assert
         result.Should().NotBeNullOrEmpty();
@@ -89,13 +89,13 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_WithSpecialCharacters_ShouldReturnResponse()
+    public async Task _WithSpecialCharacters_ShouldReturnResponse()
     {
         // Arrange
         var prompt = "What about special chars: !@#$%^&*()_+-=[]{}|;':\",./<>?";
 
         // Act
-        var result = await _chatService.ChatAsync(prompt);
+        var result = await _chatService.Chat(prompt);
 
         // Assert
         result.Should().NotBeNullOrEmpty();
@@ -103,13 +103,13 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_ShouldLogInformation()
+    public async Task _ShouldLogInformation()
     {
         // Arrange
         var prompt = "test prompt";
 
         // Act
-        await _chatService.ChatAsync(prompt);
+        await _chatService.Chat(prompt);
 
         // Assert
         _mockLogger.Verify(
@@ -123,10 +123,10 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_WithNullPrompt_ShouldLogInformation()
+    public async Task _WithNullPrompt_ShouldLogInformation()
     {
         // Act
-        await _chatService.ChatAsync(null!);
+        await _chatService.Chat(null!);
 
         // Assert
         _mockLogger.Verify(
@@ -140,15 +140,15 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task ChatAsync_MultipleCalls_ShouldLogEachCall()
+    public async Task _MultipleCalls_ShouldLogEachCall()
     {
         // Arrange
         var prompt1 = "first prompt";
         var prompt2 = "second prompt";
 
         // Act
-        await _chatService.ChatAsync(prompt1);
-        await _chatService.ChatAsync(prompt2);
+        await _chatService.Chat(prompt1);
+        await _chatService.Chat(prompt2);
 
         // Assert
         _mockLogger.Verify(
@@ -166,10 +166,10 @@ public class ChatServiceTests
     [InlineData("How are you today?")]
     [InlineData("Tell me a joke")]
     [InlineData("What is the weather like?")]
-    public async Task ChatAsync_WithVariousPrompts_ShouldReturnConsistentResponse(string prompt)
+    public async Task _WithVariousPrompts_ShouldReturnConsistentResponse(string prompt)
     {
         // Act
-        var result = await _chatService.ChatAsync(prompt);
+        var result = await _chatService.Chat(prompt);
 
         // Assert
         result.Should().Be("This is a mock response to the prompt.");
