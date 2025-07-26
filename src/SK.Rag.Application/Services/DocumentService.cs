@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using SK.Rag.Application.Services.Interfaces;
 
-namespace SK.Rag.Application.DocumentLoaders;
+namespace SK.Rag.Application.Services;
 
 public class DocumentService(
     ILogger<DocumentService> logger) : IDocumentService
