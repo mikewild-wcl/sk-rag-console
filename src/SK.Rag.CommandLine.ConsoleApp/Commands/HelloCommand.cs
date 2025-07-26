@@ -1,7 +1,8 @@
 ﻿using System.CommandLine;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Commands;
-internal class HelloCommand : Command
+
+public class HelloCommand : Command
 {
     public HelloCommand()
         : base("hello", "Prints a hello world message.")

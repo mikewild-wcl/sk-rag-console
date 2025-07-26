@@ -6,13 +6,13 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 
 // Look into this - https://endjin.com/blog/2020/09/simple-pattern-for-using-system-commandline-with-dependency-injection
+// https://learn.microsoft.com/en-us/dotnet/standard/commandline/migration-guide-2.0.0-beta5
 
 Option<FileInfo> fileOption = new("--file")
 {
     Description = "The file to read and display on the console."
 };
 
-//https://learn.microsoft.com/en-us/dotnet/standard/commandline/migration-guide-2.0.0-beta5
 Command chatCommand = new("chat", "Start an interactive chat session");
 chatCommand.SetAction((ParseResult parseResult) =>
 {
