@@ -2,5 +2,7 @@
 
 public interface IChatService
 {
-    public Task<string> Chat(string prompt);
+    public Task<string> Chat(string prompt, CancellationToken cancellationToken = default);
+
+    IAsyncEnumerable<string> GetResponseAsync(string userMessage, CancellationToken cancellationToken = default);
 }

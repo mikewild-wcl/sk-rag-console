@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using SK.Rag.Application.Configuration;
 using SK.Rag.Application.DocumentLoaders;
+using SK.Rag.Application.Extensions;
 using SK.Rag.Application.Services;
 using SK.Rag.Application.Services.Interfaces;
 using System;
@@ -34,7 +35,7 @@ public static class ConfigurationExtensions
         services.AddTransient<IHtmlWebProvider, HtmlWebProvider>();
 
         services.AddTransient<IDocumentService, DocumentService>();
-        services.AddTransient<IChatService, IChatService>();
+        services.AddTransient<IChatService, ChatService>();
 
         return services;
     }
@@ -62,14 +63,19 @@ public static class ConfigurationExtensions
 
             var kernelBuilder = Kernel.CreateBuilder();
 
+            var modelId = azureOpenAiSettings.GetModelIdOrDeploymentName();
+            var embeddingModelId = azureOpenAiSettings.GetEmbeddingModelIdOrDeploymentName();
+
 #pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             kernelBuilder
                 .AddAzureOpenAIChatCompletion(
                     azureOpenAiSettings.DeploymentName,
-                    client)
+                    client,
+                    modelId: modelId)
                 .AddAzureOpenAIEmbeddingGenerator(
                     azureOpenAiSettings.EmbeddingDeploymentName,
                     client,
+                    modelId: embeddingModelId,
                     dimensions: 1536);
 #pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 

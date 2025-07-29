@@ -120,7 +120,6 @@ foreach (var parseError in parseResult.Errors)
 
 //var config = new CommandLineConfiguration(rootCommand);
 
-
 var commandResult = await config.InvokeAsync(args);
 
 return commandResult;
@@ -138,9 +137,17 @@ static void ReadFile(FileInfo file)
 //static CommandLineConfiguration BuildParser(ServiceProvider serviceProvider)
 static CommandLineConfiguration BuildParser(IServiceCollection services)
 {
-    services.AddScoped<DocumentServiceCommand>();
+    services.AddSingleton<ChatCommand>();
+    services.AddSingleton<DocumentServiceCommand>();
 
     var serviceProvider = services.BuildServiceProvider();
+
+    //Command chatCommand = new("chat", "Start an interactive chat session.");
+    //chatCommand.SetAction((ParseResult parseResult, IServiceProvider sp) =>
+    //{
+    //    Console.WriteLine($"Hello chatters!");
+    //    // Here you would typically call your chat service
+    //});
 
     RootCommand rootCommand = new("Sample app for System.CommandLine")
     {
@@ -148,6 +155,7 @@ static CommandLineConfiguration BuildParser(IServiceCollection services)
         Subcommands =
         {
             new HelloCommand(),
+            serviceProvider.GetRequiredService<ChatCommand>(),
             serviceProvider.GetRequiredService<DocumentServiceCommand>()
             //new DocumentServiceCommand(
             //    serviceProvider.GetRequiredService<IDocumentService>(),

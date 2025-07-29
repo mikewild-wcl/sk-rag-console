@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using SK.Rag.Application.Services;
 using SK.Rag.Application.Services.Interfaces;
 using System.CommandLine;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Commands;
 
 public class DocumentServiceCommand : Command
-//: base("hello", "Prints a hello world message.")
+        //: base("hello", "Prints a hello world message.")
 {
     private readonly IDocumentService _documentService;
     private readonly ILogger<DocumentServiceCommand> _logger;

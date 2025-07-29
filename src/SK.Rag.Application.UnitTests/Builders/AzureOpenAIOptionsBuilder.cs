@@ -14,13 +14,17 @@ public static class AzureOpenAIOptionsBuilder
         string apiKey = DefaultApiKey,
         string endpoint = DefaultEndpoint,
         string deploymentName = DefaultDeploymentName,
+        string? modelId = null,
         string embeddingDeploymentName = DefaultEmbeddingDeploymentName,
+        string? embeddingModelId = null,
         int timeout = DefaultTimeout) => new(
             ApiKey: apiKey,
             Endpoint: endpoint,
             DeploymentName: deploymentName,
             EmbeddingDeploymentName: embeddingDeploymentName)
-        { 
+        {
+            ModelId = modelId,
+            EmbeddingModelId = embeddingModelId,
             Timeout = timeout,
         };
 }

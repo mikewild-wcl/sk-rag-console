@@ -21,7 +21,9 @@ public class AzureOpenAiOptionsTests
         options.ApiKey.Should().Be(apiKey);
         options.Endpoint.Should().Be(endpoint);
         options.DeploymentName.Should().Be(deploymentName);
+        options.ModelId.Should().BeNull();
         options.EmbeddingDeploymentName.Should().Be(embeddingDeploymentName);
+        options.EmbeddingModelId.Should().BeNull();
         options.Timeout.Should().Be(30);
     }
 
@@ -40,14 +42,16 @@ public class AzureOpenAiOptionsTests
             apiKey,
             endpoint,
             deploymentName,
-            embeddingDeploymentName,
-            timeout);
+            embeddingDeploymentName: embeddingDeploymentName,
+            timeout: timeout);
 
         // Assert
         options.ApiKey.Should().Be(apiKey);
         options.Endpoint.Should().Be(endpoint);
         options.DeploymentName.Should().Be(deploymentName);
         options.EmbeddingDeploymentName.Should().Be(embeddingDeploymentName);
+        options.ModelId.Should().BeNull();
+        options.EmbeddingModelId.Should().BeNull();
         options.Timeout.Should().Be(1001);
     }
 
