@@ -1,17 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SK.Rag.Application.Configuration;
-using SK.Rag.Application.Services;
-using SK.Rag.Application.Services.Interfaces;
 using SK.Rag.CommandLine.ConsoleApp.Commands;
 using SK.Rag.CommandLine.ConsoleApp.Extensions;
-using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.CommandLine.Parsing;
 
 // Look into this - https://endjin.com/blog/2020/09/simple-pattern-for-using-system-commandline-with-dependency-injection
 // https://learn.microsoft.com/en-us/dotnet/standard/commandline/migration-guide-2.0.0-beta5
@@ -86,7 +78,6 @@ RootCommand rootCommand = new("Sample app for System.CommandLine")
 };
 rootCommand.Subcommands.Add(chatCommand);
 rootCommand.Subcommands.Add(documentCommand);
-rootCommand.Subcommands.Add(new HelloCommand());
 
 rootCommand.SetAction((ParseResult parseResult) =>
 {
@@ -154,7 +145,6 @@ static CommandLineConfiguration BuildParser(IServiceCollection services)
         //fileOption
         Subcommands =
         {
-            new HelloCommand(),
             serviceProvider.GetRequiredService<ChatCommand>(),
             serviceProvider.GetRequiredService<DocumentServiceCommand>()
             //new DocumentServiceCommand(

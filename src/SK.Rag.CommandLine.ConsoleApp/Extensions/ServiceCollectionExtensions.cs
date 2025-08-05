@@ -7,7 +7,7 @@ using SK.Rag.Application.DocumentLoaders;
 using SK.Rag.Application.Extensions;
 using SK.Rag.Application.Services;
 using SK.Rag.Application.Services.Interfaces;
-using System;
+using Spectre.Console;
 using System.ClientModel;
 using System.Diagnostics.CodeAnalysis;
 
@@ -26,7 +26,9 @@ public static class ConfigurationExtensions
 
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
-        services.AddScoped<IDocumentLoaderFactory, DocumentLoaderFactory>();
+        services.AddSingleton<IAnsiConsole>(_ => AnsiConsole.Console);
+        services.AddSingleton<IDocumentLoaderFactory, DocumentLoaderFactory>();
+
         services.AddTransient<DocxDocumentLoader>();
         services.AddTransient<PdfDocumentLoader>();
         services.AddTransient<TextDocumentLoader>();

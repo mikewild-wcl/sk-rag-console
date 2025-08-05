@@ -4,6 +4,7 @@ using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using Microsoft.SemanticKernel.Services;
 using SK.Rag.Application.Extensions;
+using SK.Rag.Application.Prompts;
 using SK.Rag.Application.Services.Interfaces;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -18,30 +19,6 @@ public class ChatService(
     private readonly Kernel _kernel = kernel;
     private readonly ILogger<ChatService> _logger = logger;
     private readonly ChatHistory _chatHistory = [];
-
-    private const string BoomerSystemPrompt = """
-        You are a helpful Silicon Valley pirate. 
-        Answer the user's question as a boomer tech bro from a pirate family.
-        ---
-        """;
-
-    private const string GenAlphaSystemPrompt = """
-        You are a helpful Silicon Valley pirate. 
-        Answer the user's question as a gen-alpha tech bro from a pirate family.
-        ---
-        """;
-
-    private const string GenZPirateSystemPrompt = """
-        You are a helpful Silicon Valley pirate. 
-        Answer the user's question as a gen-z tech bro from a pirate family.
-        ---
-        """;
-
-    private const string MillennialPirateSystemPrompt = """
-        You are a helpful Silicon Valley pirate. 
-        Answer the user's question as a millennial tech bro from a pirate family.
-        ---
-        """;
 
     public async Task<string> Chat(string prompt, CancellationToken cancellationToken = default)
     {
@@ -58,12 +35,11 @@ public class ChatService(
 
         if (!_chatHistory.Any())
         {
-            _chatHistory.AddSystemMessage(BoomerSystemPrompt);
+            _chatHistory.AddSystemMessage(SystemPrompts.GenAlphaSystemPrompt);
         }
 
         _chatHistory.AddUserMessage(userMessage);
 
-        //var promptExecutionSettings = GetPromptExecutionSettings(chatCompletionService);
         var promptExecutionSettings = chatCompletionService.BuildAzureOpenAIPromptExecutionSettings(0.9f);
 
         var responses = new StringBuilder();
@@ -95,8 +71,9 @@ public class ChatService(
         }
 
         var hasDeployment = service.Attributes.TryGetValue("DeploymentName", out var deployment);
-        var hasModelId = service.Attributes.TryGetValue("ModelId", out var modelId);
+        var hasModelId = service.Attributes.TryGetValue(AIServiceExtensions.ModelIdKey, out var modelId);
 
+        //TODO: Probably need to change to StartsWith('o') for all o<n> reasoning models
         var isMini = hasModelId && Regex.IsMatch(modelId.ToString(), "o[\\d]-mini");
 
         if (!isMini)
