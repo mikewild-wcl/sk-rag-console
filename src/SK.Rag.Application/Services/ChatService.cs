@@ -1,14 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
-using Microsoft.SemanticKernel.Services;
 using SK.Rag.Application.Extensions;
 using SK.Rag.Application.Prompts;
 using SK.Rag.Application.Services.Interfaces;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace SK.Rag.Application.DocumentLoaders;
 
@@ -56,31 +53,5 @@ public class ChatService(
         }
 
         _chatHistory.AddAssistantMessage(responses.ToString());
-    }
-
-    //TODO: Can rewrite as an extension method on IAIService
-    private AzureOpenAIPromptExecutionSettings GetPromptExecutionSettings(IAIService service)
-    {
-        var promptExecutionSettings = new AzureOpenAIPromptExecutionSettings();
-
-        var modelName = service.GetModelId();
-        var attributes = service.Attributes;
-        foreach (var attribute in attributes)
-        {
-            _logger.LogInformation("ChatCompletionService Attribute: {Key} = {Value}", attribute.Key, attribute.Value);
-        }
-
-        var hasDeployment = service.Attributes.TryGetValue("DeploymentName", out var deployment);
-        var hasModelId = service.Attributes.TryGetValue(AIServiceExtensions.ModelIdKey, out var modelId);
-
-        //TODO: Probably need to change to StartsWith('o') for all o<n> reasoning models
-        var isMini = hasModelId && Regex.IsMatch(modelId.ToString(), "o[\\d]-mini");
-
-        if (!isMini)
-        {
-            promptExecutionSettings.Temperature = 0.9f;
-        }
-
-        return promptExecutionSettings;
     }
 }
