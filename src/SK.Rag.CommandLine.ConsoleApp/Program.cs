@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using SK.Rag.CommandLine.ConsoleApp.Commands;
 using SK.Rag.CommandLine.ConsoleApp.Extensions;
 using System.CommandLine;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime;
 
 // Look into this - https://endjin.com/blog/2020/09/simple-pattern-for-using-system-commandline-with-dependency-injection
 // https://learn.microsoft.com/en-us/dotnet/standard/commandline/migration-guide-2.0.0-beta5
@@ -17,14 +19,18 @@ builder.Services
     .AddClients()
     .AddSemanticKernel();
 
-var config = BuildParser(builder.Services);
+var rootCommand = BuildRootCommand(builder.Services);
+
+builder.Services.AddSingleton(rootCommand);
+
+var commandLineConfig = new CommandLineConfiguration(rootCommand);
 
 var host = builder.Build();
 
-Option<FileInfo> fileOption = new("--file")
-{
-    Description = "The file to read and display on the console."
-};
+//Option<FileInfo> fileOption = new("--file")
+//{
+//    Description = "The file to read and display on the console."
+//};
 
 /*
 Command chatCommand = new("chat", "Start an interactive chat session");
@@ -111,8 +117,7 @@ foreach (var parseError in parseResult.Errors)
 
 //var config = new CommandLineConfiguration(rootCommand);
 
-var commandResult = await config.InvokeAsync(args);
-
+var commandResult = await commandLineConfig.InvokeAsync(args);
 return commandResult;
 
 //return 1;
@@ -126,7 +131,7 @@ static void ReadFile(FileInfo file)
 }
 
 //static CommandLineConfiguration BuildParser(ServiceProvider serviceProvider)
-static CommandLineConfiguration BuildParser(IServiceCollection services)
+static RootCommand BuildRootCommand(IServiceCollection services)
 {
     services.AddSingleton<ChatCommand>();
     services.AddSingleton<DocumentServiceCommand>();
@@ -140,20 +145,112 @@ static CommandLineConfiguration BuildParser(IServiceCollection services)
     //    // Here you would typically call your chat service
     //});
 
+    /* Try a different way of creating commands with actions */
+    Option<DirectoryInfo> directoryOption = new("--dir")
+    {
+        Aliases = { "-d" },
+        Description = "A directory containing files to ingest.",
+        AllowMultipleArgumentsPerToken = true
+    };
+
+    Option<FileInfo> fileOption = new("--file")
+    {        
+        Aliases = { "-f" },
+        Description = "The file to ingest.",
+        AllowMultipleArgumentsPerToken = true,
+    };
+
+    Option<FileInfo[]> filesOption = new("--files")
+    {
+        Description = "A list of files to ingest.",
+        AllowMultipleArgumentsPerToken = true,
+    };
+
+    Command documentIngestCommand = new("ingest", "Ingest a document")
+    {
+        directoryOption,
+        fileOption
+    };
+
+    documentIngestCommand.Validators.Add(parseResult =>
+    {
+        var dir = parseResult.GetValue(directoryOption);
+        var file = parseResult.GetValue(fileOption);
+
+        if(dir is not null && file is not null)
+        {
+            parseResult.AddError($"Only one of --dir or --file can be used, but not both");
+        }
+
+        if (dir is { Exists: false })
+        {
+            parseResult.AddError($"Directory '{directoryOption.Name}' not found.");
+        }
+
+        if (dir is not null && !dir.Exists && dir is { Exists: true })
+        {
+            parseResult.AddError($"Directory '{directoryOption.Name}' not found.");
+        }
+
+        if (file is not null && !file.Exists)
+        {
+            parseResult.AddError($"File '{fileOption.Name}' not found.");
+        }
+    });
+
+    documentIngestCommand.SetAction((ParseResult parseResult) =>
+    {
+        Console.WriteLine($"Ingesting document(s)");
+        var dir = parseResult.GetValue(directoryOption);
+        var file = parseResult.GetValue(fileOption);
+        var files = parseResult.GetValue(filesOption);
+
+        if (files is { Length: > 0 })
+        {
+            foreach (var f in files)
+            {
+                Console.WriteLine($"File - {f.FullName} Exists={f.Exists}");
+            }
+        }
+
+        //TODO: Create a handler from services and pass the dir/file list(s) to it
+        //      Create a service scope as well
+        //      Also pass dir/files ti chat command and start on doc loading
+        //      Add parser to services (or a simpler parser)  
+
+    });
+    //    documentIngestCommand.SetAction((ParseResult parseResult, IServiceProvider sp) =>
+    Command documentCommand = new("document")
+    {
+        Aliases = { "doc" },
+        Subcommands =
+        {
+            documentIngestCommand
+        },
+    };
+    //documentCommand.SetAction((ParseResult parseResult) =>
+    //{
+    //    Console.WriteLine($"This is the basic document command");
+    //});
+
+    //documentCommand.Subcommands.Add(documentIngestCommand);
+
     RootCommand rootCommand = new("Sample app for System.CommandLine")
     {
         //fileOption
         Subcommands =
         {
             serviceProvider.GetRequiredService<ChatCommand>(),
-            serviceProvider.GetRequiredService<DocumentServiceCommand>()
+            serviceProvider.GetRequiredService<DocumentServiceCommand>(),
+            documentCommand
             //new DocumentServiceCommand(
             //    serviceProvider.GetRequiredService<IDocumentService>(),
             //    serviceProvider.GetRequiredService<ILogger<DocumentServiceCommand>>())
         }
     };
 
-    var config = new CommandLineConfiguration(rootCommand);
+    return rootCommand;
 
-    return config;
+    //var config = new CommandLineConfiguration(rootCommand);
+    //return config;
 }

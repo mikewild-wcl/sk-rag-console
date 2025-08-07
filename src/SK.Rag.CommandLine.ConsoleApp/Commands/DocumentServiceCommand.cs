@@ -21,9 +21,6 @@ public class DocumentServiceCommand : Command
         Aliases.Add("svc");
 
         SetAction(ExecuteAction);
-        //{
-        //    Console.WriteLine($"This is the document commandHello chatters!");
-        //});
     }
 
     public async Task ExecuteAction(ParseResult context)

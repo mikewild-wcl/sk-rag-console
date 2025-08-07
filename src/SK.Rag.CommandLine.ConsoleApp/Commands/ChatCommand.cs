@@ -32,10 +32,6 @@ public class ChatCommand : Command
         console.Clear();
         console.WriteApplicationFigletText();
 
-        var prompt = "test";
-
-        // await chatService.Chat(prompt, cancellationToken);
-
         string? userInput;
         do
         {
@@ -49,10 +45,15 @@ public class ChatCommand : Command
 
             console.Write("Response > ");
 
-            if(userInput?.Trim() == "/q" || userInput?.Trim() == "/quit")
+            if (userInput?.Trim() == "/q" || userInput?.Trim() == "/quit")
             {
                 _logger.LogInformation("User is quitting the session with {UserInput}", userInput);
                 break;
+            }
+
+            if (TryParseInputAsCommand(userInput, cancellationToken))
+            {
+                continue;
             }
 
             await foreach (var responseToken in chatService.GetResponseAsync(userInput, cancellationToken))
@@ -65,5 +66,39 @@ public class ChatCommand : Command
         } while (true);
 
         return context;
+    }
+
+    private bool TryParseInputAsCommand(string? userInput, CancellationToken cancellationToken)
+    {
+        if (userInput?.TrimStart() is not { Length: > 1 } ||
+           !userInput.TrimStart().StartsWith('/'))
+        {
+            return false;
+        }
+
+        var commandString = userInput[userInput.IndexOf('/')..].TrimEnd();
+
+        var command = _serviceProvider.GetRequiredService<RootCommand>();
+        var parseResult = command.Parse(commandString);
+
+        if (parseResult.Errors.Count > 0)
+        {
+            foreach (var error in parseResult.Errors)
+            {
+                _logger.LogError("Command parsing error: {ErrorMessage}", error.Message);
+                AnsiConsole.MarkupLine($"[red]Error:[/] {error.Message}");
+            }
+            return false;
+        }
+
+        if (parseResult.Tokens.Count > 0)
+        {
+            var commandRsult = parseResult.Invoke();
+            //var commandRsult = await parseResult.InvokeAsync(cancellationToken);
+
+            return commandRsult! >= 0;
+        }
+
+        return false;
     }
 }

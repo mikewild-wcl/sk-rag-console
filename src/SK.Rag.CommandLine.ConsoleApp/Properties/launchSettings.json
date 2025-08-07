@@ -2,7 +2,8 @@
   "profiles": {
     "SK.Rag.CommandLine.ConsoleApp": {
       "commandName": "Project",
-      "commandLineArgs": "chat",
+      //"commandLineArgs": "document ingest  --file \"..\\..\\..\\..\\.private\\My CV.docx\"",
+      "commandLineArgs": "document ingest  --dir \"..\\..\\..\\..\\.private\"",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       }

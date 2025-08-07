@@ -7,7 +7,7 @@ using SK.Rag.Application.Services.Interfaces;
 namespace SK.Rag.Application.Services;
 
 public class DocumentLoaderFactory(
-    IServiceProvider serviceProvider): IDocumentLoaderFactory
+    IServiceProvider serviceProvider) : IDocumentLoaderFactory
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
