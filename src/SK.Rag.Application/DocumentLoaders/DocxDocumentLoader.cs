@@ -10,17 +10,6 @@ public class DocxDocumentLoader : IDocumentLoader
 {
     public async IAsyncEnumerable<DocumentChunk> StreamChunks(Stream stream, string documentUri)
     {
-        //if (string.IsNullOrEmpty(documentUri))
-        //{
-        //    yield break;
-        //}
-
-        //if (!File.Exists(documentUri))
-        //{
-        //    yield break;
-        //}
-
-        //using var fileStream = new FileStream(documentUri, FileMode.Open, FileAccess.Read);
         var paragraphs = ReadParagraphs(stream, documentUri);
         await foreach (var paragraph in paragraphs)
         {

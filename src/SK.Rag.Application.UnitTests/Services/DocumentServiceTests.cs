@@ -12,7 +12,7 @@ public class DocumentServiceTests
     public DocumentServiceTests()
     {
         _mockLogger = new Mock<ILogger<DocumentService>>();
-        _documentService = DocumentServiceBuilder.Build(_mockLogger.Object);
+        _documentService = DocumentServiceBuilder.Build(logger: _mockLogger.Object);
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public class DocumentServiceTests
         var document1 = "document1.pdf";
         var document2 = "document2.pdf";
         var document3 = "document3.pdf";
-        
+
         await _documentService.Ingest(document1);
         await _documentService.Ingest(document2);
         await _documentService.Ingest(document3);
@@ -154,7 +154,7 @@ public class DocumentServiceTests
         // Arrange
         var document1 = "document1.pdf";
         var document2 = "document2.pdf";
-        
+
         await _documentService.Ingest(document1);
         await _documentService.Ingest(document2);
         await _documentService.Delete(document1);

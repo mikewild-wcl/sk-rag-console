@@ -1,13 +1,40 @@
 using Microsoft.Extensions.Logging;
+using SK.Rag.Application.Extensions;
 using SK.Rag.Application.Services.Interfaces;
 
 namespace SK.Rag.Application.Services;
 
 public class DocumentService(
+    IDocumentLoaderFactory documentLoaderFactory,
     ILogger<DocumentService> logger) : IDocumentService
 {
+    private readonly IDocumentLoaderFactory _documentLoaderFactory = documentLoaderFactory;
     private readonly ILogger<DocumentService> _logger = logger;
     private readonly List<string> _documents = [];
+
+    public async Task Ingest(IEnumerable<FileInfo> files, CancellationToken cancellationToken)
+    {
+        foreach (var file in files)
+        {
+            var documentType = file.GetDocumentType();
+            var documentLoader = _documentLoaderFactory.Create(documentType);
+
+            using var stream = file.OpenRead();
+
+            await foreach (var item in documentLoader.StreamChunks(stream, file.FullName))
+            {
+                //TODO: Pass this async stream into a vector store
+                //yield return item;
+                _logger.LogInformation("Processing chunk from document '{DocumentName}'. {Key} - {Text}", 
+                    file.Name,
+                    item.Key,
+                    item.Text);
+
+            }
+
+            _documents.Add(file.Name);
+        }
+    }
 
     public async Task<bool> Ingest(string documentName)
     {
@@ -27,6 +54,7 @@ public class DocumentService(
 
         _documents.Add(documentName);
         _logger.LogInformation("Successfully ingested document '{DocumentName}'", documentName);
+
         return await Task.FromResult(true);
     }
 

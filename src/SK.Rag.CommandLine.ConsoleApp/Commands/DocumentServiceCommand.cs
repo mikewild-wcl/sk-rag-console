@@ -25,7 +25,7 @@ public class DocumentServiceCommand : Command
 
     public async Task ExecuteAction(ParseResult context)
     {
-        _logger.LogInformation("Executing HelloWithServiceCommand");
+        _logger.LogInformation("Executing DocumentServiceCommand");
         await _documentService.List();
         Console.WriteLine("Hello, Documents World!");
     }

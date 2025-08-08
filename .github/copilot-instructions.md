@@ -20,4 +20,18 @@
 - use xUnit for unit tests
 - use FluentAssertions version 7.2 for assertions
 - Use Moq for mocking
+- The unit tests project unclude GlobalUsings as follows:
+  ```csharp
+  global using FluentAssertions;
+  global using Moq;
+  global using Xunit;
+  ```
+- When creating unit tests, there is no need to include the following namespaces
+  ```
+  using FluentAssertions;
+  using Moq;
+  using Xunit;
+  ```
+
+
 

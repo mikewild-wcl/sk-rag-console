@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;
 using SK.Rag.CommandLine.ConsoleApp.Commands;
 using SK.Rag.CommandLine.ConsoleApp.Extensions;
 using System.CommandLine;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime;
 
 // Look into this - https://endjin.com/blog/2020/09/simple-pattern-for-using-system-commandline-with-dependency-injection
 // https://learn.microsoft.com/en-us/dotnet/standard/commandline/migration-guide-2.0.0-beta5
@@ -21,11 +19,9 @@ builder.Services
 
 var rootCommand = BuildRootCommand(builder.Services);
 
-builder.Services.AddSingleton(rootCommand);
-
 var commandLineConfig = new CommandLineConfiguration(rootCommand);
 
-var host = builder.Build();
+builder.Build();
 
 //Option<FileInfo> fileOption = new("--file")
 //{
@@ -133,77 +129,34 @@ static void ReadFile(FileInfo file)
 //static CommandLineConfiguration BuildParser(ServiceProvider serviceProvider)
 static RootCommand BuildRootCommand(IServiceCollection services)
 {
-    services.AddSingleton<ChatCommand>();
-    services.AddSingleton<DocumentServiceCommand>();
+    //services.AddSingleton<ChatCommand>();
+    //services.AddSingleton<DocumentServiceCommand>();
 
     var serviceProvider = services.BuildServiceProvider();
 
-    //Command chatCommand = new("chat", "Start an interactive chat session.");
-    //chatCommand.SetAction((ParseResult parseResult, IServiceProvider sp) =>
-    //{
-    //    Console.WriteLine($"Hello chatters!");
-    //    // Here you would typically call your chat service
-    //});
-
-    /* Try a different way of creating commands with actions */
-    Option<DirectoryInfo> directoryOption = new("--dir")
-    {
-        Aliases = { "-d" },
-        Description = "A directory containing files to ingest.",
-        AllowMultipleArgumentsPerToken = true
-    };
-
-    Option<FileInfo> fileOption = new("--file")
-    {        
-        Aliases = { "-f" },
-        Description = "The file to ingest.",
-        AllowMultipleArgumentsPerToken = true,
-    };
-
-    Option<FileInfo[]> filesOption = new("--files")
-    {
-        Description = "A list of files to ingest.",
-        AllowMultipleArgumentsPerToken = true,
-    };
-
     Command documentIngestCommand = new("ingest", "Ingest a document")
     {
-        directoryOption,
-        fileOption
+        Options.DirectoryOption,
+        Options.FileOption
     };
 
-    documentIngestCommand.Validators.Add(parseResult =>
-    {
-        var dir = parseResult.GetValue(directoryOption);
-        var file = parseResult.GetValue(fileOption);
-
-        if(dir is not null && file is not null)
-        {
-            parseResult.AddError($"Only one of --dir or --file can be used, but not both");
-        }
-
-        if (dir is { Exists: false })
-        {
-            parseResult.AddError($"Directory '{directoryOption.Name}' not found.");
-        }
-
-        if (dir is not null && !dir.Exists && dir is { Exists: true })
-        {
-            parseResult.AddError($"Directory '{directoryOption.Name}' not found.");
-        }
-
-        if (file is not null && !file.Exists)
-        {
-            parseResult.AddError($"File '{fileOption.Name}' not found.");
-        }
-    });
-
+    documentIngestCommand.Validators.Add(Validators.DocumentOptionsValidator);
     documentIngestCommand.SetAction((ParseResult parseResult) =>
     {
         Console.WriteLine($"Ingesting document(s)");
-        var dir = parseResult.GetValue(directoryOption);
-        var file = parseResult.GetValue(fileOption);
-        var files = parseResult.GetValue(filesOption);
+        var dir = parseResult.GetValue(Options.DirectoryOption);
+        var file = parseResult.GetValue(Options.FileOption);
+        var files = parseResult.GetValue(Options.FilesOption);
+
+        if (dir is not null)
+        {
+            Console.WriteLine($"Directory - {dir.FullName} Exists={dir.Exists}");
+        }
+
+        if (file is not null)
+        {
+            Console.WriteLine($"File - {file.FullName} Exists={file.Exists}");
+        }
 
         if (files is { Length: > 0 })
         {
@@ -219,6 +172,7 @@ static RootCommand BuildRootCommand(IServiceCollection services)
         //      Add parser to services (or a simpler parser)  
 
     });
+
     //    documentIngestCommand.SetAction((ParseResult parseResult, IServiceProvider sp) =>
     Command documentCommand = new("document")
     {
@@ -235,19 +189,80 @@ static RootCommand BuildRootCommand(IServiceCollection services)
 
     //documentCommand.Subcommands.Add(documentIngestCommand);
 
+    Command chatCommand = new("chat")
+    {
+        Options.DirectoryOption,
+        Options.FileOption
+    };
+    chatCommand.Validators.Add(Validators.DocumentOptionsValidator);
+    chatCommand.SetAction(async (ParseResult parseResult, CancellationToken cancellationToken) =>
+    {
+        using var serviceScope = serviceProvider.CreateAsyncScope();
+
+        var chatAction = serviceProvider.GetRequiredService<ChatAction>();
+
+        var dir = parseResult.GetValue(Options.DirectoryOption);
+        // TODO: Make this a list of files as well
+        var file = parseResult.GetValue(Options.FileOption);
+
+        var files = dir?.EnumerateFiles()?.ToList() ?? [];
+        if (file is not null)
+        {
+            files.Add(file);
+        }
+
+        await chatAction.RunChat(
+            files,
+            cancellationToken);
+    });
+
+    //Command chatCommand = new("chat", "Start an interactive chat session.");
+    //chatCommand.SetAction((ParseResult parseResult, IServiceProvider sp) =>
+    //{
+    //    Console.WriteLine($"Hello chatters!");
+    //    // Here you would typically call your chat service
+    //});
+
     RootCommand rootCommand = new("Sample app for System.CommandLine")
     {
         //fileOption
         Subcommands =
         {
-            serviceProvider.GetRequiredService<ChatCommand>(),
-            serviceProvider.GetRequiredService<DocumentServiceCommand>(),
+            //serviceProvider.GetRequiredService<ChatCommand>(),
+            chatCommand,
             documentCommand
+            //serviceProvider.GetRequiredService<DocumentServiceCommand>(),
             //new DocumentServiceCommand(
             //    serviceProvider.GetRequiredService<IDocumentService>(),
             //    serviceProvider.GetRequiredService<ILogger<DocumentServiceCommand>>())
         }
     };
+
+    Command slashCommand = new("/")
+    {
+        Description = "Nested command that can be run inside chats.",
+        Subcommands =
+        {
+            documentCommand
+        }
+    };
+
+    services.AddKeyedSingleton("SlashCommand", () => slashCommand);
+    services.AddKeyedSingleton("DocCommand", () =>
+    {
+        Command cmd = new("test")
+        {
+            Subcommands =
+            {
+                documentIngestCommand
+            }
+        };
+
+        return cmd;
+    });
+    //services.AddSingleton<DocumentServiceCommand>();
+
+    //services.AddKeyedSingleton("SlashCommand", () => new Command("TEST"));
 
     return rootCommand;
 

@@ -14,8 +14,9 @@ public class DocumentLoaderFactory(
     public IDocumentLoader Create(DocumentType documentType) =>
         documentType switch
         {
-            DocumentType.Pdf => _serviceProvider.GetRequiredService<PdfDocumentLoader>(),
             DocumentType.Docx => _serviceProvider.GetRequiredService<DocxDocumentLoader>(),
+            DocumentType.Markdown => _serviceProvider.GetRequiredService<MarkdownDocumentLoader>(),
+            DocumentType.Pdf => _serviceProvider.GetRequiredService<PdfDocumentLoader>(),
             DocumentType.Text => _serviceProvider.GetRequiredService<TextDocumentLoader>(),
             DocumentType.WebPage => _serviceProvider.GetRequiredService<WebsiteLoader>(),
             _ => throw new ArgumentException("Invalid document type", nameof(documentType))

@@ -1,35 +1,23 @@
-using Microsoft.Extensions.DependencyInjection;
 using SK.Rag.Application.DocumentLoaders;
 using SK.Rag.Application.Models;
 using SK.Rag.Application.Services;
-using SK.Rag.Application.Services.Interfaces;
+using SK.Rag.Application.UnitTests.Builders;
 
 namespace SK.Rag.Application.UnitTests.Services;
 
 public class DocumentLoaderFactoryTests
 {
-    private readonly ServiceProvider _serviceProvider;
     private readonly DocumentLoaderFactory _factory;
 
     public DocumentLoaderFactoryTests()
     {
-        var services = new ServiceCollection();
-
-        services.AddLogging();
-        services.AddSingleton(_ => Mock.Of<IHtmlWebProvider>());
-        services.AddSingleton<PdfDocumentLoader>();
-        services.AddSingleton<DocxDocumentLoader>();
-        services.AddSingleton<TextDocumentLoader>();
-        services.AddSingleton<WebsiteLoader>();
-
-        _serviceProvider = services.BuildServiceProvider();
-
-        _factory = new DocumentLoaderFactory(_serviceProvider);
+        _factory = DocumentLoaderFactoryBuilder.Build();
     }
 
     [Theory]
-    [InlineData(DocumentType.Pdf, typeof(PdfDocumentLoader))]
     [InlineData(DocumentType.Docx, typeof(DocxDocumentLoader))]
+    [InlineData(DocumentType.Markdown, typeof(MarkdownDocumentLoader))]
+    [InlineData(DocumentType.Pdf, typeof(PdfDocumentLoader))]
     [InlineData(DocumentType.Text, typeof(TextDocumentLoader))]
     [InlineData(DocumentType.WebPage, typeof(WebsiteLoader))]
     public void Create_ShouldReturnCorrectLoaderType(DocumentType type, Type expectedType)

@@ -2,7 +2,7 @@ namespace SK.Rag.Application.Services.Interfaces;
 
 public interface IDocumentService
 {
-    Task<bool> Ingest(string documentName);
+    Task Ingest(IEnumerable<FileInfo> files, CancellationToken cancellationToken);
 
     Task<bool> Delete(string documentName);
 

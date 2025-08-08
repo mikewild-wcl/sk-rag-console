@@ -7,35 +7,39 @@ using System.CommandLine;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Commands;
 
-public class ChatCommand : Command
+public class ChatAction(
+    IAnsiConsole console,
+    IChatService chatService,
+    IDocumentService _documentService,
+    IServiceProvider serviceProvider,
+    ILogger<ChatAction> logger)
+// TODO: Add interface?
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<ChatCommand> _logger;
+    private readonly IChatService _chatService = chatService;
+    private readonly IDocumentService _documentService = _documentService;
+    private readonly IAnsiConsole _console = console;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly ILogger<ChatAction> _logger = logger;
 
-    public ChatCommand(
-        IServiceProvider serviceProvider,
-        ILogger<ChatCommand> logger)
-        : base("chat", "Starts an interactive chat session.")
+    // Take dir and file details and call document service
+    public async Task RunChat(
+        IEnumerable<FileInfo> files,
+        CancellationToken cancellationToken)
     {
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger.LogInformation("Starting new chat session");
 
-        SetAction(ExecuteAction);
-    }
+        //_console.Clear();
+        _console.WriteApplicationFigletText();
 
-    public async Task<ParseResult> ExecuteAction(ParseResult context, CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Executing ChatCommand");
-        var chatService = _serviceProvider.GetRequiredService<IChatService>();
-        var console = _serviceProvider.GetRequiredService<IAnsiConsole>();
-
-        console.Clear();
-        console.WriteApplicationFigletText();
+        if (files.Any())
+        {
+            await _documentService.Ingest(files, cancellationToken);
+        }
 
         string? userInput;
         do
         {
-            console.Write("User > ");
+            _console.Write("User > ");
             userInput = Console.ReadLine();
 
             if (userInput is not { Length: > 0 })
@@ -43,7 +47,7 @@ public class ChatCommand : Command
                 continue;
             }
 
-            console.Write("Response > ");
+            _console.Write("Response > ");
 
             if (userInput?.Trim() == "/q" || userInput?.Trim() == "/quit")
             {
@@ -56,16 +60,14 @@ public class ChatCommand : Command
                 continue;
             }
 
-            await foreach (var responseToken in chatService.GetResponseAsync(userInput, cancellationToken))
+            await foreach (var responseToken in _chatService.GetResponseAsync(userInput, cancellationToken))
             {
-                console.Write(responseToken ?? "");
+                _console.Write(responseToken ?? "");
             }
 
-            console.WriteLine();
+            _console.WriteLine();
 
         } while (true);
-
-        return context;
     }
 
     private bool TryParseInputAsCommand(string? userInput, CancellationToken cancellationToken)
@@ -78,7 +80,7 @@ public class ChatCommand : Command
 
         var commandString = userInput[userInput.IndexOf('/')..].TrimEnd();
 
-        var command = _serviceProvider.GetRequiredService<RootCommand>();
+        var command = _serviceProvider.GetRequiredKeyedService<Command>("SlashCommand");
         var parseResult = command.Parse(commandString);
 
         if (parseResult.Errors.Count > 0)

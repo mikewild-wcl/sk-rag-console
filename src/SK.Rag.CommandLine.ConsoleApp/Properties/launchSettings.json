@@ -2,8 +2,10 @@
   "profiles": {
     "SK.Rag.CommandLine.ConsoleApp": {
       "commandName": "Project",
-      //"commandLineArgs": "document ingest  --file \"..\\..\\..\\..\\.private\\My CV.docx\"",
-      "commandLineArgs": "document ingest  --dir \"..\\..\\..\\..\\.private\"",
+      //"commandLineArgs": "document ingest  --file \"..\\..\\..\\..\\..\\.private\\cvs\\My CV.docx\"",
+      //"commandLineArgs": "document ingest --dir \"..\\..\\..\\..\\..\\.private\\cvs\" --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
+      //"commandLineArgs": "chat --dir \"..\\..\\..\\..\\..\\.private\\cvs\" --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
+      "commandLineArgs": "chat --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       }
