@@ -13,7 +13,7 @@ public static class ParseResultExtensions
     {
         if(parseResult is null)        
         {
-            return Enumerable.Empty<FileInfo>();
+            return [];
         }
 
         var dir = parseResult.GetValue(Options.DirectoryOption);

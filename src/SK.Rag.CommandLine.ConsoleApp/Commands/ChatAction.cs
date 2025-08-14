@@ -1,17 +1,19 @@
 ﻿using Microsoft.Extensions.Logging;
 using SK.Rag.Application.Services.Interfaces;
+using SK.Rag.CommandLine.ConsoleApp.Commands.Interfaces;
 using SK.Rag.CommandLine.ConsoleApp.Extensions;
 using Spectre.Console;
+using System.CommandLine;
 using System.Text.RegularExpressions;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Commands;
 
-public class ChatAction(
+public partial class ChatAction(
     IAnsiConsole console,
     IChatService chatService,
     IDocumentService _documentService,
     IServiceProvider serviceProvider,
-    ILogger<ChatAction> logger)
+    ILogger<ChatAction> logger) : ICommandActionRunner
 {
     private readonly IChatService _chatService = chatService;
     private readonly IDocumentService _documentService = _documentService;
@@ -19,10 +21,14 @@ public class ChatAction(
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly ILogger<ChatAction> _logger = logger;
 
-    public async Task Run(
-        IEnumerable<FileInfo> files,
-        CancellationToken cancellationToken)
+    // Finds a string with a leading slash and returns the string value without leading or trailing whitespace
+    [GeneratedRegex(@"^\s*/(.+?)\s*$")]
+    private static partial Regex SlashCommandRegex();
+
+    public async Task Run(ParseResult parseResult, CancellationToken cancellationToken)
     {
+        var files = parseResult.GetFileList();
+
         _logger.LogInformation("Starting new chat session");
 
         //_console.Clear();
@@ -52,7 +58,7 @@ public class ChatAction(
                 break;
             }
 
-            if (TryParseInputAsCommand(userInput, cancellationToken))
+            if (await TryParseInputAsCommand(userInput, cancellationToken))
             {
                 continue;
             }
@@ -66,25 +72,17 @@ public class ChatAction(
 
         } while (true);
     }
-
-    private bool TryParseInputAsCommand(string? userInput, CancellationToken cancellationToken)
+      
+    private async Task<bool> TryParseInputAsCommand(string? userInput, CancellationToken cancellationToken)
     {
-        if (userInput?.TrimStart() is not { Length: > 1 } ||
-           !userInput.TrimStart().StartsWith('/'))
+        var match = SlashCommandRegex().Match(userInput ?? "");
+        var commandString = match.Success ? match.Groups[1].Value : string.Empty;
+
+        if(!match.Success || string.IsNullOrWhiteSpace(commandString))
         {
             return false;
         }
 
-        //var commandString = userInput.Substring(userInput.IndexOf('/') + 1).TrimEnd();
-        var commandString = userInput.Trim().Substring(1);
-
-        //Write a regex that finds a string with a leading slash and returns the string value without leading or trailing whitespace
-        var match = Regex.Match(userInput ?? "", @"^\s*/(.+?)\s*$");
-        var commandValue = match.Success ? match.Groups[1].Value : string.Empty;
-
-        //Write a regex that finds a string with a leading slash and returns the string value without leading or trailing whitespace
-
-        //var command = _serviceProvider.GetRequiredKeyedService<Command>("SlashCommand");
         var commandBuilder = new CommandBuilder("Slash", "Slash command", _serviceProvider);
         commandBuilder.AddDocumentCommands();
         var command = commandBuilder.Command;
@@ -103,9 +101,7 @@ public class ChatAction(
 
         if (parseResult.Tokens.Count > 0)
         {
-            var commandResult = parseResult.Invoke();
-            //var commandResult = await parseResult.InvokeAsync(cancellationToken);
-
+            var commandResult = await parseResult.InvokeAsync(cancellationToken);
             return commandResult! >= 0;
         }
 

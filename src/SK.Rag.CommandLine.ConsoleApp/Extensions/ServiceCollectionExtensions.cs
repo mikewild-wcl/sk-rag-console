@@ -10,6 +10,7 @@ using SK.Rag.Application.Services.Interfaces;
 using SK.Rag.CommandLine.ConsoleApp.Commands;
 using Spectre.Console;
 using System.ClientModel;
+using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Extensions;
@@ -92,7 +93,24 @@ public static class ConfigurationExtensions
         return services;
     }
 
-    public static AzureOpenAIOptions? GetAzureOpenAIOptions(this IServiceProvider serviceProvider)
+    public static RootCommand BuildRootCommand(this IServiceCollection services)
+    {
+        var serviceProvider = services.BuildServiceProvider();
+
+        var commandBuilder = new CommandBuilder(
+            "",
+            ApplicationConstants.ApplicationDescription,
+            serviceProvider,
+            new RootCommand());
+
+        commandBuilder
+            .AddDocumentCommands()
+            .AddChatCommand();
+
+        return (commandBuilder.Command as RootCommand) ?? [];
+    }
+
+    private static AzureOpenAIOptions? GetAzureOpenAIOptions(this IServiceProvider serviceProvider)
     {
             // https://github.com/dotnet/runtime/issues/79958#issuecomment-2274396492
             /* var aiOptions = serviceProvider.GetRequiredService<IOptions<AzureOpenAiOptions>>().Value; */
