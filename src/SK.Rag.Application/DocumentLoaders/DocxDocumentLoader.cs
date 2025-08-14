@@ -29,8 +29,10 @@ public class DocxDocumentLoader : IDocumentLoader
         // Create an XmlDocument to hold the document contents and load the document contents into the XmlDocument.
         var xmlDoc = new XmlDocument();
         var nsManager = new XmlNamespaceManager(xmlDoc.NameTable);
+#pragma warning disable S1075 // URIs should not be hardcoded
         nsManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
         nsManager.AddNamespace("w14", "http://schemas.microsoft.com/office/word/2010/wordml");
+#pragma warning restore S1075 // URIs should not be hardcoded
 
         xmlDoc.Load(wordDoc.MainDocumentPart.GetStream());
 

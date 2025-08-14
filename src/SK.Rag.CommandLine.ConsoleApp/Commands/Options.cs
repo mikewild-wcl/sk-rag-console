@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Commands;
+
 public static class Options
 {
     public static Option<DirectoryInfo> DirectoryOption { get; } 
@@ -8,7 +9,7 @@ public static class Options
         {
             Aliases = { "-d" },
             Description = "A directory containing files to ingest.",
-            AllowMultipleArgumentsPerToken = true
+            //AllowMultipleArgumentsPerToken = true
         };
 
     public static Option<FileInfo> FileOption { get; }
@@ -16,7 +17,7 @@ public static class Options
         {
             Aliases = { "-f" },
             Description = "The file to ingest.",
-            AllowMultipleArgumentsPerToken = true,
+            //AllowMultipleArgumentsPerToken = true,
         };
 
     public static Option<FileInfo[]> FilesOption { get; } 
@@ -25,4 +26,12 @@ public static class Options
             Description = "A list of files to ingest.",
             AllowMultipleArgumentsPerToken = true,
         };
+
+    public static Option<Uri> UriOption { get; }
+       = new("--uri")
+       {
+           Aliases = { "-u" },
+           Description = "A uri for a web page to ingest.",
+           AllowMultipleArgumentsPerToken = true
+       };
 }

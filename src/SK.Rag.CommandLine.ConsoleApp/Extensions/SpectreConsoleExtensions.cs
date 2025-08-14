@@ -1,13 +1,12 @@
 ﻿using Spectre.Console;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Extensions;
+
 public static class SpectreConsoleExtensions
 {
-    public const string ApplicationDisplayName = "RAG Console";
-
     public static void WriteApplicationFigletText(this IAnsiConsole console)
     {
-        console.WriteFigletText(ApplicationDisplayName);
+        console.WriteFigletText(ApplicationConstants.ApplicationName);
     }
 
     public static void WriteFigletText(this IAnsiConsole console, string text)

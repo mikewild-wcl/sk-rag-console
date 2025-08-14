@@ -42,7 +42,8 @@ public static class ConfigurationExtensions
         services.AddTransient<IChatService, ChatService>();
 
         services.AddTransient<ChatAction>();
-        
+        services.AddTransient<DocumentIngestAction>();
+
         return services;
     }
 

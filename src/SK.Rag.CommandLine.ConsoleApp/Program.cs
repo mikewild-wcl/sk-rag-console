@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SK.Rag.CommandLine.ConsoleApp;
 using SK.Rag.CommandLine.ConsoleApp.Commands;
 using SK.Rag.CommandLine.ConsoleApp.Extensions;
 using System.CommandLine;
@@ -17,16 +18,11 @@ builder.Services
     .AddClients()
     .AddSemanticKernel();
 
-var rootCommand = BuildRootCommand(builder.Services);
+//var rootCommand = BuildRootCommand(builder.Services);
 
-var commandLineConfig = new CommandLineConfiguration(rootCommand);
+//var commandLineConfig = new CommandLineConfiguration(rootCommand);
 
 builder.Build();
-
-//Option<FileInfo> fileOption = new("--file")
-//{
-//    Description = "The file to read and display on the console."
-//};
 
 /*
 Command chatCommand = new("chat", "Start an interactive chat session");
@@ -113,82 +109,25 @@ foreach (var parseError in parseResult.Errors)
 
 //var config = new CommandLineConfiguration(rootCommand);
 
+var rootCommand = BuildRootCommand(builder.Services);
+
+var commandLineConfig = new CommandLineConfiguration(rootCommand);
 var commandResult = await commandLineConfig.InvokeAsync(args);
+
 return commandResult;
-
-//return 1;
-
-static void ReadFile(FileInfo file)
-{
-    foreach (string line in File.ReadLines(file.FullName))
-    {
-        Console.WriteLine(line);
-    }
-}
 
 //static CommandLineConfiguration BuildParser(ServiceProvider serviceProvider)
 static RootCommand BuildRootCommand(IServiceCollection services)
 {
-    //services.AddSingleton<ChatCommand>();
-    //services.AddSingleton<DocumentServiceCommand>();
-
     var serviceProvider = services.BuildServiceProvider();
 
-    Command documentIngestCommand = new("ingest", "Ingest a document")
-    {
-        Options.DirectoryOption,
-        Options.FileOption
-    };
+    var commandBuilder = new CommandBuilder(
+        "", 
+        ApplicationConstants.ApplicationDescription, 
+        serviceProvider,
+        new RootCommand());
 
-    documentIngestCommand.Validators.Add(Validators.DocumentOptionsValidator);
-    documentIngestCommand.SetAction((ParseResult parseResult) =>
-    {
-        Console.WriteLine($"Ingesting document(s)");
-        var dir = parseResult.GetValue(Options.DirectoryOption);
-        var file = parseResult.GetValue(Options.FileOption);
-        var files = parseResult.GetValue(Options.FilesOption);
-
-        if (dir is not null)
-        {
-            Console.WriteLine($"Directory - {dir.FullName} Exists={dir.Exists}");
-        }
-
-        if (file is not null)
-        {
-            Console.WriteLine($"File - {file.FullName} Exists={file.Exists}");
-        }
-
-        if (files is { Length: > 0 })
-        {
-            foreach (var f in files)
-            {
-                Console.WriteLine($"File - {f.FullName} Exists={f.Exists}");
-            }
-        }
-
-        //TODO: Create a handler from services and pass the dir/file list(s) to it
-        //      Create a service scope as well
-        //      Also pass dir/files ti chat command and start on doc loading
-        //      Add parser to services (or a simpler parser)  
-
-    });
-
-    //    documentIngestCommand.SetAction((ParseResult parseResult, IServiceProvider sp) =>
-    Command documentCommand = new("document")
-    {
-        Aliases = { "doc" },
-        Subcommands =
-        {
-            documentIngestCommand
-        },
-    };
-    //documentCommand.SetAction((ParseResult parseResult) =>
-    //{
-    //    Console.WriteLine($"This is the basic document command");
-    //});
-
-    //documentCommand.Subcommands.Add(documentIngestCommand);
-
+    /*
     Command chatCommand = new("chat")
     {
         Options.DirectoryOption,
@@ -215,6 +154,71 @@ static RootCommand BuildRootCommand(IServiceCollection services)
             files,
             cancellationToken);
     });
+    */
+
+    commandBuilder
+        .AddDocumentCommands()
+        .AddChatCommand();
+
+    return (commandBuilder.Command as RootCommand) ?? new RootCommand();
+
+    /* Below here has been moved into builder */
+
+    //Command documentIngestCommand = new("ingest", "Ingest a document")
+    //{
+    //    Options.DirectoryOption,
+    //    Options.FileOption
+    //};
+
+    //documentIngestCommand.Validators.Add(Validators.DocumentOptionsValidator);
+    //documentIngestCommand.SetAction((ParseResult parseResult) =>
+    //{
+    //    Console.WriteLine($"Ingesting document(s)");
+    //    var dir = parseResult.GetValue(Options.DirectoryOption);
+    //    var file = parseResult.GetValue(Options.FileOption);
+    //    var files = parseResult.GetValue(Options.FilesOption);
+
+    //    if (dir is not null)
+    //    {
+    //        Console.WriteLine($"Directory - {dir.FullName} Exists={dir.Exists}");
+    //    }
+
+    //    if (file is not null)
+    //    {
+    //        Console.WriteLine($"File - {file.FullName} Exists={file.Exists}");
+    //    }
+
+    //    if (files is { Length: > 0 })
+    //    {
+    //        foreach (var f in files)
+    //        {
+    //            Console.WriteLine($"File - {f.FullName} Exists={f.Exists}");
+    //        }
+    //    }
+
+    //    //TODO: Create a handler from services and pass the dir/file list(s) to it
+    //    //      Create a service scope as well
+    //    //      Also pass dir/files ti chat command and start on doc loading
+    //    //      Add parser to services (or a simpler parser)  
+
+    //});
+
+    //    documentIngestCommand.SetAction((ParseResult parseResult, IServiceProvider sp) =>
+    //Command documentCommand = new("document", "Manage documents")
+    //{
+    //    Aliases = { "doc" },
+    //    Subcommands =
+    //    {
+    //        documentIngestCommand
+    //    },
+    //};
+    //documentCommand.SetAction((ParseResult parseResult) =>
+    //{
+    //    Console.WriteLine($"This is the basic document command");
+    //});
+
+    //documentCommand.Subcommands.Add(documentIngestCommand);
+        
 
     //Command chatCommand = new("chat", "Start an interactive chat session.");
     //chatCommand.SetAction((ParseResult parseResult, IServiceProvider sp) =>
@@ -223,48 +227,41 @@ static RootCommand BuildRootCommand(IServiceCollection services)
     //    // Here you would typically call your chat service
     //});
 
-    RootCommand rootCommand = new("Sample app for System.CommandLine")
-    {
-        //fileOption
-        Subcommands =
-        {
-            //serviceProvider.GetRequiredService<ChatCommand>(),
-            chatCommand,
-            documentCommand
-            //serviceProvider.GetRequiredService<DocumentServiceCommand>(),
-            //new DocumentServiceCommand(
-            //    serviceProvider.GetRequiredService<IDocumentService>(),
-            //    serviceProvider.GetRequiredService<ILogger<DocumentServiceCommand>>())
-        }
-    };
+    //RootCommand rootCommand = new(ApplicationConstants.ApplicationName)
+    //{
+    //    //fileOption
+    //    Subcommands =
+    //    {
+    //        chatCommand,
+    //        documentCommand
+    //    }
+    //};
 
-    Command slashCommand = new("/")
-    {
-        Description = "Nested command that can be run inside chats.",
-        Subcommands =
-        {
-            documentCommand
-        }
-    };
+    //Command slashCommand = new("/")
+    //{
+    //    Description = "Nested command that can be run inside chats.",
+    //    Subcommands =
+    //    {
+    //        documentCommand
+    //    }
+    //};
 
-    services.AddKeyedSingleton("SlashCommand", () => slashCommand);
-    services.AddKeyedSingleton("DocCommand", () =>
-    {
-        Command cmd = new("test")
-        {
-            Subcommands =
-            {
-                documentIngestCommand
-            }
-        };
+    //services.AddKeyedSingleton("SlashCommand", () => slashCommand);
+    //services.AddKeyedSingleton("DocCommand", () =>
+    //{
+    //    Command cmd = new("test")
+    //    {
+    //        Subcommands =
+    //        {
+    //            documentIngestCommand
+    //        }
+    //    };
 
-        return cmd;
-    });
+    //    return cmd;
+    //});
     //services.AddSingleton<DocumentServiceCommand>();
 
-    //services.AddKeyedSingleton("SlashCommand", () => new Command("TEST"));
-
-    return rootCommand;
+    //return rootCommand;
 
     //var config = new CommandLineConfiguration(rootCommand);
     //return config;
