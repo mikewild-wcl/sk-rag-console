@@ -41,6 +41,7 @@ public static class ConfigurationExtensions
 
         services.AddTransient<IDocumentService, DocumentService>();
         services.AddTransient<IChatService, ChatService>();
+        services.AddTransient<ISearchService, SearchService>();
 
         services.AddTransient<ChatAction>();
         services.AddTransient<DocumentIngestAction>();
@@ -86,6 +87,8 @@ public static class ConfigurationExtensions
                     modelId: embeddingModelId,
                     dimensions: 1536);
 #pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+
+            kernelBuilder.Services.AddInMemoryVectorStore();
 
             return kernelBuilder.Build();
         });

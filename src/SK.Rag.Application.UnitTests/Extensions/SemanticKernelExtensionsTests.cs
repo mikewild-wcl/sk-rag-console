@@ -1,5 +1,8 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Services;
 using SK.Rag.Application.Extensions;
+using SK.Rag.Application.Models;
 
 namespace SK.Rag.Application.UnitTests.Extensions;
 
@@ -45,7 +48,7 @@ public class SemanticKernelExtensionsTests
 
         result.Should().BeFalse();
     }
-       
+
 
     [Fact]
     public void IsReasoningModel_ShouldCheckDeploymentName_WhenModelIdAndModelIdAttributeAreNull()
@@ -87,5 +90,20 @@ public class SemanticKernelExtensionsTests
         var settings = mockService.Object.BuildAzureOpenAIPromptExecutionSettings(0.99f);
 
         settings.Temperature.Should().BeNull();
+    }       
+    
+    [Fact]
+    public async Task GetVectorStoreCollection_ShouldCreateAndReturnCollection()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddInMemoryVectorStore();
+        var kernel = new Kernel(services.BuildServiceProvider());
+
+        // Act
+        var collection = await kernel.GetVectorStoreCollection<string, DocumentChunk>(Constants.DocumentCollectionName);
+
+        // Assert
+        collection.Should().NotBeNull();
     }
 }

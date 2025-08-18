@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using SK.Rag.Application.DocumentLoaders;
+using SK.Rag.Application.Services.Interfaces;
 using SK.Rag.Application.UnitTests.Builders;
 
 namespace SK.Rag.Application.UnitTests.Services;
@@ -9,14 +10,17 @@ public class ChatServiceTests
 {
     private readonly Mock<ILogger<ChatService>> _mockLogger;
     private readonly ChatService _chatService;
+    private readonly Mock<ISearchService> _mockSearchService;
 
     public ChatServiceTests()
     {
         var kernel = Kernel.CreateBuilder().Build();
         _mockLogger = new Mock<ILogger<ChatService>>();
+        _mockSearchService = new Mock<ISearchService>();
 
         _chatService = ChatServiceBuilder.Build(
             kernel,
+            _mockSearchService.Object,
             _mockLogger.Object);
     }
 

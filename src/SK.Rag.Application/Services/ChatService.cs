@@ -11,10 +11,13 @@ namespace SK.Rag.Application.DocumentLoaders;
 
 public class ChatService(
     Kernel kernel,
+    ISearchService searchService,
     ILogger<ChatService> logger) : IChatService
 {
     private readonly Kernel _kernel = kernel;
+    private readonly ISearchService _searchService = searchService;
     private readonly ILogger<ChatService> _logger = logger;
+
     private readonly ChatHistory _chatHistory = [];
 
     public async Task<string> Chat(string prompt, CancellationToken cancellationToken = default)

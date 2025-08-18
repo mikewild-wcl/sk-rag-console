@@ -1,4 +1,6 @@
-﻿using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+﻿using Microsoft.Extensions.VectorData;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using Microsoft.SemanticKernel.Services;
 
 namespace SK.Rag.Application.Extensions;
@@ -18,6 +20,18 @@ public static class SemanticKernelExtensions
         return promptExecutionSettings;
     }
 
+    public static async Task<VectorStoreCollection<K, T>> GetVectorStoreCollection<K, T>(this Kernel kernel, string name)
+        where K : notnull
+        where T : class
+    {
+        var vectorStore = kernel.GetRequiredService<VectorStore>();
+
+        var collection = vectorStore.GetCollection<K, T>(name);
+        await collection.EnsureCollectionExistsAsync();
+
+        return collection;
+    }
+
     public static bool IsReasoningModel(this IAIService aiService)
     {
         var modelId = aiService.GetModelId(); // This uses ModelId attribute if available
@@ -26,5 +40,5 @@ public static class SemanticKernelExtensions
             : null;
 
         return modelId is not null && modelId.StartsWith('o');
-    }
+    }    
 }
