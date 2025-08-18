@@ -1,10 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
-using SK.Rag.Application.Models;
 using SK.Rag.Application.Services;
-using SK.Rag.Application.Services.Interfaces;
 using SK.Rag.Application.UnitTests.Builders;
 
 namespace SK.Rag.Application.UnitTests.Services;

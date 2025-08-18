@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SK.Rag.CommandLine.ConsoleApp.Extensions;
-using System;
 using System.CommandLine;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Commands;

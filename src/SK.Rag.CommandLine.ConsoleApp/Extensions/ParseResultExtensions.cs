@@ -1,10 +1,5 @@
 ﻿using SK.Rag.CommandLine.ConsoleApp.Commands;
-using System;
-using System.Collections.Generic;
 using System.CommandLine;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Extensions;
 public static class ParseResultExtensions
