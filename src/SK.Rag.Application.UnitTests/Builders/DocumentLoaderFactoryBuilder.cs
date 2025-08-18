@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SK.Rag.Application.DocumentLoaders;
-using SK.Rag.Application.Services;
 using SK.Rag.Application.Services.Interfaces;
 
 namespace SK.Rag.Application.UnitTests.Builders

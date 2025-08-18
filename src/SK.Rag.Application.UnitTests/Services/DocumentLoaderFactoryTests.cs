@@ -1,6 +1,5 @@
 using SK.Rag.Application.DocumentLoaders;
 using SK.Rag.Application.Models;
-using SK.Rag.Application.Services;
 using SK.Rag.Application.UnitTests.Builders;
 
 namespace SK.Rag.Application.UnitTests.Services;

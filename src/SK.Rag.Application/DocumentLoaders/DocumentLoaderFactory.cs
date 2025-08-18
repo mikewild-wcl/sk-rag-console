@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SK.Rag.Application.DocumentLoaders;
 using SK.Rag.Application.DocumentLoaders.Interfaces;
 using SK.Rag.Application.Models;
 using SK.Rag.Application.Services.Interfaces;
 
-namespace SK.Rag.Application.Services;
+namespace SK.Rag.Application.DocumentLoaders;
 
 public class DocumentLoaderFactory(
     IServiceProvider serviceProvider) : IDocumentLoaderFactory

@@ -7,7 +7,7 @@ using SK.Rag.Application.Services.Interfaces;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace SK.Rag.Application.DocumentLoaders;
+namespace SK.Rag.Application.Services;
 
 public class ChatService(
     Kernel kernel,

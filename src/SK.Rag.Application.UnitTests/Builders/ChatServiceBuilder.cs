@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.SemanticKernel;
-using SK.Rag.Application.DocumentLoaders;
 using SK.Rag.Application.Services;
 using SK.Rag.Application.Services.Interfaces;
 

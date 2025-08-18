@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
-using SK.Rag.Application.DocumentLoaders;
+using SK.Rag.Application.Services;
 using SK.Rag.Application.Services.Interfaces;
 using SK.Rag.Application.UnitTests.Builders;
 
