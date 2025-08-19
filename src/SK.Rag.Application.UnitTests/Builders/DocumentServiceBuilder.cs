@@ -32,7 +32,7 @@ public class DocumentServiceBuilder
 
     public DocumentService Build() =>
         new(
-            _documentLoaderFactory ?? DocumentLoaderFactoryBuilder.Build(),
+            _documentLoaderFactory ?? DocumentLoaderFactoryBuilder.CreateDefault(),
             _kernel ?? new Kernel(),
             _logger ?? new NullLogger<DocumentService>());
 

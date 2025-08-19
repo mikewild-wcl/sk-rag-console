@@ -27,5 +27,7 @@ public class SearchServiceBuilder
             _kernel ?? new Kernel(),
             _logger ?? new NullLogger<SearchService>());
 
+    public static SearchServiceBuilder Empty { get { return new(); } }
+ 
     public static SearchService CreateDefault() => new SearchServiceBuilder().Build();
 }

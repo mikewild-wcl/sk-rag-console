@@ -12,15 +12,24 @@ public class ChatServiceBuilder
     private ISearchService? _searchService;
     private ILogger<ChatService>? _logger;
 
+    private readonly SearchServiceBuilder _searchServiceBuilder = SearchServiceBuilder.Empty;
+
     public ChatServiceBuilder WithKernel(Kernel kernel)
     {
         _kernel = kernel;
         return this;
     }
 
+    // Search service will take precedence over the search service builder
     public ChatServiceBuilder WithSearchService(ISearchService searchService)
     {
         _searchService = searchService;
+        return this;
+    }
+
+    public ChatServiceBuilder WithSearchService(Action<SearchServiceBuilder> action)
+    {
+        action(_searchServiceBuilder); 
         return this;
     }
 
@@ -30,10 +39,10 @@ public class ChatServiceBuilder
         return this;
     }
 
-    public ChatService Build() => 
+    public ChatService Build() =>
         new(
             _kernel ?? new Kernel(),
-            _searchService ?? new SearchServiceBuilder().WithKernel(_kernel ?? new Kernel()).Build(),
+            _searchService ?? _searchServiceBuilder.Build(),
             _logger ?? new NullLogger<ChatService>());
 
     public static ChatService CreateDefault() => new ChatServiceBuilder().Build();

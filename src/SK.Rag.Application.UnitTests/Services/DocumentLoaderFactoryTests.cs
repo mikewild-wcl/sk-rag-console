@@ -10,7 +10,7 @@ public class DocumentLoaderFactoryTests
 
     public DocumentLoaderFactoryTests()
     {
-        _factory = DocumentLoaderFactoryBuilder.Build();
+        _factory = new DocumentLoaderFactoryBuilder().Build();
     }
 
     [Theory]
