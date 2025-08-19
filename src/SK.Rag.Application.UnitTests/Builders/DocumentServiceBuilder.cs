@@ -4,16 +4,37 @@ using Microsoft.SemanticKernel;
 using SK.Rag.Application.Services;
 using SK.Rag.Application.Services.Interfaces;
 
-namespace SK.Rag.Application.UnitTests.Builders
+namespace SK.Rag.Application.UnitTests.Builders;
+
+public class DocumentServiceBuilder
 {
-    public static class DocumentServiceBuilder
+    private IDocumentLoaderFactory? _documentLoaderFactory;
+    private Kernel? _kernel;
+    private ILogger<DocumentService>? _logger;
+
+    public DocumentServiceBuilder WithDocumentLoaderFactory(IDocumentLoaderFactory documentLoaderFactory)
     {
-        public static DocumentService Build(
-            IDocumentLoaderFactory? documentLoaderFactory = null,
-            Kernel? kernel = null,
-            ILogger<DocumentService>? logger = null) =>
-            new(documentLoaderFactory ?? DocumentLoaderFactoryBuilder.Build(),
-                kernel ?? new Kernel(),
-                logger ?? new NullLogger<DocumentService>());
+        _documentLoaderFactory = documentLoaderFactory;
+        return this;
     }
+
+    public DocumentServiceBuilder WithKernel(Kernel kernel)
+    {
+        _kernel = kernel;
+        return this;
+    }
+
+    public DocumentServiceBuilder WithLogger(ILogger<DocumentService> logger)
+    {
+        _logger = logger;
+        return this;
+    }
+
+    public DocumentService Build() =>
+        new(
+            _documentLoaderFactory ?? DocumentLoaderFactoryBuilder.Build(),
+            _kernel ?? new Kernel(),
+            _logger ?? new NullLogger<DocumentService>());
+
+    public static DocumentService CreateDefault() => new DocumentServiceBuilder().Build();
 }

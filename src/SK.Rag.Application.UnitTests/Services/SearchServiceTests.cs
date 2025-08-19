@@ -17,7 +17,10 @@ public class SearchServiceTests
         services.AddInMemoryVectorStore();
         var kernel = new Kernel(services.BuildServiceProvider());
         _mockLogger = new Mock<ILogger<SearchService>>();
-        _searchService = SearchServiceBuilder.Build(kernel, _mockLogger.Object);
+        _searchService = new SearchServiceBuilder()
+            .WithKernel(kernel)
+            .WithLogger(_mockLogger.Object)
+            .Build();
     }
 
     [Fact]

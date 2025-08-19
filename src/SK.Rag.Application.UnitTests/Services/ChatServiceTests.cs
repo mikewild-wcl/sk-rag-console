@@ -18,10 +18,11 @@ public class ChatServiceTests
         _mockLogger = new Mock<ILogger<ChatService>>();
         _mockSearchService = new Mock<ISearchService>();
 
-        _chatService = ChatServiceBuilder.Build(
-            kernel,
-            _mockSearchService.Object,
-            _mockLogger.Object);
+        _chatService = new ChatServiceBuilder()
+            .WithKernel(kernel)
+            .WithSearchService(_mockSearchService.Object)
+            .WithLogger(_mockLogger.Object)
+            .Build();
     }
 
     [Fact]

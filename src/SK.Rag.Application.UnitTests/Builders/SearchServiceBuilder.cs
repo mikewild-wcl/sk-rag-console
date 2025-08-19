@@ -5,12 +5,27 @@ using SK.Rag.Application.Services;
 
 namespace SK.Rag.Application.UnitTests.Builders;
 
-public static class SearchServiceBuilder
+public class SearchServiceBuilder
 {
-    public static SearchService Build(
-        Kernel? kernel = null,
-        ILogger<SearchService>? logger = null) =>
+    private Kernel? _kernel;
+    private ILogger<SearchService>? _logger;
+
+    public SearchServiceBuilder WithKernel(Kernel kernel)
+    {
+        _kernel = kernel;
+        return this;
+    }
+
+    public SearchServiceBuilder WithLogger(ILogger<SearchService> logger)
+    {
+        _logger = logger;
+        return this;
+    }
+
+    public SearchService Build() =>
         new(
-            kernel ?? new Kernel(),
-            logger ?? new NullLogger<SearchService>());
+            _kernel ?? new Kernel(),
+            _logger ?? new NullLogger<SearchService>());
+
+    public static SearchService CreateDefault() => new SearchServiceBuilder().Build();
 }

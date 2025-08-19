@@ -12,7 +12,9 @@ public class DocumentServiceTests
     public DocumentServiceTests()
     {
         _mockLogger = new Mock<ILogger<DocumentService>>();
-        _documentService = DocumentServiceBuilder.Build(logger: _mockLogger.Object);
+        _documentService = new DocumentServiceBuilder()
+            .WithLogger(_mockLogger.Object)
+            .Build();
     }
 
     [Fact]
