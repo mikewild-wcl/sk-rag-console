@@ -2,6 +2,7 @@
 using System.CommandLine;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Extensions;
+
 public static class ParseResultExtensions
 {
     public static IEnumerable<FileInfo> GetFileList(this ParseResult parseResult)

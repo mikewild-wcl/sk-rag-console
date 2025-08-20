@@ -8,6 +8,7 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="SK.Rag.Application.UnitTests/SK.Rag.Application.UnitTests.csproj" />
+    <Project Path="SK.Rag.CommandLine.ConsoleApp.UnitTests/SK.Rag.CommandLine.ConsoleApp.UnitTests.csproj" />
     <Project Path="SK.Rag.ConsoleApp.UnitTests/SK.Rag.ConsoleApp.UnitTests.csproj" />
   </Folder>
   <Project Path="SK.Rag.Application/SK.Rag.Application.csproj" />
