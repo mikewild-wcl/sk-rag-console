@@ -122,6 +122,7 @@ public class DocumentServiceTests
     public async Task List_WithNoDocuments_ShouldReturnEmptyCollection()
     {
         // Act
+        await _documentService.DeleteAll();
         var result = await _documentService.List();
 
         // Assert
@@ -135,6 +136,8 @@ public class DocumentServiceTests
         var document1 = "document1.pdf";
         var document2 = "document2.pdf";
         var document3 = "document3.pdf";
+
+        await _documentService.DeleteAll();
 
         await _documentService.Ingest(document1);
         await _documentService.Ingest(document2);
@@ -156,6 +159,8 @@ public class DocumentServiceTests
         // Arrange
         var document1 = "document1.pdf";
         var document2 = "document2.pdf";
+
+        await _documentService.DeleteAll();
 
         await _documentService.Ingest(document1);
         await _documentService.Ingest(document2);

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SK.Rag.CommandLine.ConsoleApp.Extensions;
+﻿using SK.Rag.CommandLine.ConsoleApp.Extensions;
 using System.CommandLine;
 
 namespace SK.Rag.CommandLine.ConsoleApp.Commands;
@@ -22,21 +21,16 @@ public class CommandBuilder(
 
     public CommandBuilder AddChatCommand()
     {
-        Command chatCommand = new("chat")
+        Command command = new("chat")
         {
             Options.DirectoryOption,
             Options.FileOption
         };
 
-        chatCommand.Validators.Add(Validators.DocumentOptionsValidator);
-        chatCommand.SetAction(async (ParseResult parseResult, CancellationToken cancellationToken) =>
-        {
-            using var serviceScope = _serviceProvider.CreateAsyncScope();
-            var action = _serviceProvider.GetRequiredService<ChatAction>();
-            await action.Run(parseResult, cancellationToken);
-        });
+        command.Validators.Add(Validators.DocumentOptionsValidator);
+        command.SetActionWithServiceScope<ChatAction>(_serviceProvider);
 
-        Command.Add(chatCommand);
+        Command.Add(command);
 
         return this;
     }
@@ -71,12 +65,7 @@ public class CommandBuilder(
         };
 
         command.Validators.Add(Validators.DocumentOptionsValidator);
-        command.SetAction(async (ParseResult parseResult, CancellationToken cancellationToken) =>
-        {
-            using var serviceScope = _serviceProvider.CreateAsyncScope();
-            var action = _serviceProvider.GetRequiredService<DocumentIngestAction>();
-            await action.Run(parseResult, cancellationToken);
-        });    
+        command.SetActionWithServiceScope<DocumentIngestAction>(_serviceProvider);
 
         return command;
     }
@@ -87,12 +76,7 @@ public class CommandBuilder(
         {
             Aliases = { "del" },
         };
-        command.SetAction(async (ParseResult parseResult, CancellationToken cancellationToken) =>
-        {
-            using var serviceScope = _serviceProvider.CreateAsyncScope();
-            var action = _serviceProvider.GetRequiredService<DocumentListAction>();
-            await action.Run(parseResult, cancellationToken);
-        });
+        command.SetActionWithServiceScope<DocumentDeleteAction>(_serviceProvider);
 
         return command;
     }

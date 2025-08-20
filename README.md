@@ -18,6 +18,8 @@ Links to check:
 
   Set up an interactive command app - https://darthpedro.net/2024/07/01/creating-interactive-console-applications-in-c/.
 
+ Beta 5 migration guide for - https://learn.microsoft.com/en-us/dotnet/standard/commandline/migration-guide-2.0.0-beta5
+
 
 ## Running console apps in Powershell (Windows Terminal)
 
@@ -43,7 +45,6 @@ Test a command by running in Developer Powershell (from the src directory):
 ragcommand -- --file bin/Debug/net9.0/scl.runtimeconfig.json
 ragcommand --file SK.Rag.CommandLine.ConsoleApp\bin\Debug\net9.0\ragcommand.runtimeconfig.json
 ```
-
 
 
 ## Unit tests

@@ -44,6 +44,16 @@ public class PdfDocumentLoader : IDocumentLoader
     {
         var letters = pdfPage.Letters;
         var words = NearestNeighbourWordExtractor.Instance.GetWords(letters);
+
+
+        foreach (var word in words)
+        {
+            if (word.Letters?.Count == 1 && word.Letters[0]?.Value?.Length == 1 && word.Letters[0].Value[0] == Convert.ToChar(61623))
+            {
+                // Skip single 'x' letters, which are often used as checkboxes or similar markers.
+            }
+        }
+
         var textBlocks = DocstrumBoundingBoxes.Instance.GetBlocks(words);
         var pageText = string.Join(Environment.NewLine + Environment.NewLine,
             textBlocks.Select(t => t.Text.ReplaceLineEndings(" ")));

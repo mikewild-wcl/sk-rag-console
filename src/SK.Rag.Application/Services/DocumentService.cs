@@ -17,8 +17,9 @@ public class DocumentService(
     private readonly ILogger<DocumentService> _logger = logger;
     private readonly Kernel _kernel = kernel;
 
-    private static readonly List<string> _documents = []; //Static so it can be used across multiple instances of the service. No logging implemented!
-
+    private static readonly object _documentsLock = new();
+    private static readonly List<string> _documents = []; //Static so it can be used across multiple instances of the service. Will move the functionality to a database later.!
+        
     public async Task Ingest(IEnumerable<FileInfo> files, CancellationToken cancellationToken)
     {
         try
@@ -58,7 +59,10 @@ public class DocumentService(
                     await vectorCollection.UpsertAsync(chunk);
                 }
 
-                _documents.Add(file.Name);
+                lock (_documentsLock)
+                {
+                    _documents.Add(file.Name);
+                }
             }
         }
         catch (Exception ex)
@@ -80,13 +84,16 @@ public class DocumentService(
             return false;
         }
 
-        if (_documents.Contains(documentName))
+        lock (_documentsLock)
         {
-            _logger.LogWarning("Document '{DocumentName}' already exists", documentName);
-            return false;
-        }
+            if (_documents.Contains(documentName))
+            {
+                _logger.LogWarning("Document '{DocumentName}' already exists", documentName);
+                return false;
+            }
 
-        _documents.Add(documentName);
+            _documents.Add(documentName);
+        }
         _logger.LogInformation("Successfully ingested document '{DocumentName}'", documentName);
 
         return await Task.FromResult(true);
@@ -102,7 +109,11 @@ public class DocumentService(
             return false;
         }
 
-        var removed = _documents.Remove(documentName);
+        var removed = false;
+        lock (_documentsLock)
+        {
+            removed = _documents.Remove(documentName);
+        }
         if (removed)
         {
             _logger.LogInformation("Successfully deleted document '{DocumentName}'", documentName);
@@ -115,10 +126,36 @@ public class DocumentService(
         return await Task.FromResult(removed);
     }
 
+    public async Task<int> DeleteAll()
+    {
+        _logger.LogInformation("Deleting all documents");
+
+        var count = 0;
+        lock (_documentsLock)
+        {
+            count = _documents.Count;
+            _documents.Clear();
+        }
+
+        if (count > 0)
+        {
+            _logger.LogInformation("Successfully removed {Count} documents", count > 0 ? count : "zero");
+        }
+
+        return await Task.FromResult(count);
+    }
+
+
     public async Task<IEnumerable<string>> List()
     {
-        _logger.LogInformation("Listing all documents. Count: {Count}", _documents.Count);
-        return await Task.FromResult(_documents.AsReadOnly());
+        List<string> documentsList;
+        lock (_documentsLock)
+        {
+            _logger.LogInformation("Listing all documents. Count: {Count}", _documents.Count);
+            documentsList = _documents.ToList();
+        }
+
+        return await Task.FromResult(documentsList.AsReadOnly());    
     }
 
     //private async Task<VectorStoreCollection<string, DocumentChunk>> GetVectorStoreCollection()
@@ -130,8 +167,6 @@ public class DocumentService(
 
     //    return collection;
     //}
-
-    //TODO: Move to SemanticKernelExtensions extensions class
 
     private async Task IngestDocumentsAsync(IEnumerable<FileInfo> files, CancellationToken cancellationToken)
     {
@@ -149,7 +184,11 @@ public class DocumentService(
                 chunk.TextEmbedding = await embeddingGenerator.GenerateVectorAsync(chunk.Text);
                 await collection.UpsertAsync(chunk);
             }
-            _documents.Add(file.Name);
+
+            lock (_documentsLock)
+            {
+                _documents.Add(file.Name);
+            }
         }
     }
 }
