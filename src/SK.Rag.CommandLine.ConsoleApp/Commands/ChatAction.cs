@@ -31,7 +31,6 @@ public partial class ChatAction(
 
         _logger.LogInformation("Starting new chat session");
 
-        //_console.Clear();
         _console.WriteApplicationFigletText();
 
         if (files.Any())

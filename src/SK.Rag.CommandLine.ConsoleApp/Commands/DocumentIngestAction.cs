@@ -10,21 +10,19 @@ namespace SK.Rag.CommandLine.ConsoleApp.Commands;
 public class DocumentIngestAction(
     IAnsiConsole console,
     IDocumentService _documentService,
-    IServiceProvider serviceProvider,
     ILogger<DocumentIngestAction> logger) : ICommandActionRunner
 {
     private readonly IDocumentService _documentService = _documentService;
     private readonly IAnsiConsole _console = console;
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly ILogger<DocumentIngestAction> _logger = logger;
 
     public async Task Run(ParseResult parseResult, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"Ingesting document(s)");
+        _console.WriteLine("Ingesting document(s)");
         var uri = parseResult.GetValue(Options.UriOption);
         if (uri is not null)
         {
-            Console.WriteLine($"Uri - {uri.AbsolutePath} IsFile={uri.IsFile}, IsLoopback={uri.IsLoopback}, LocalPath={uri.LocalPath}");
+            _console.WriteLine($"Uri - {uri.AbsolutePath} IsFile={uri.IsFile}, IsLoopback={uri.IsLoopback}, LocalPath={uri.LocalPath}");
         }
 
         var files = parseResult.GetFileList();

@@ -17,7 +17,7 @@ public class DocumentService(
     private readonly ILogger<DocumentService> _logger = logger;
     private readonly Kernel _kernel = kernel;
 
-    private readonly List<string> _documents = [];
+    private static readonly List<string> _documents = []; //Static so it can be used across multiple instances of the service. No logging implemented!
 
     public async Task Ingest(IEnumerable<FileInfo> files, CancellationToken cancellationToken)
     {

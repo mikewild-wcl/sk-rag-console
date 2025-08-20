@@ -44,7 +44,9 @@ public static class ConfigurationExtensions
         services.AddTransient<ISearchService, SearchService>();
 
         services.AddTransient<ChatAction>();
+        services.AddTransient<DocumentDeleteAction>();
         services.AddTransient<DocumentIngestAction>();
+        services.AddTransient<DocumentListAction>();
 
         return services;
     }

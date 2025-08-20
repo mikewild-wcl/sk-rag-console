@@ -18,8 +18,6 @@ builder.Services
 
 builder.Build();
 
-//var rootCommand = builder.Services.BuildRootCommand();
-//return await rootCommand.Parse(args).InvokeAsync();
 return await builder
     .Services
     .BuildRootCommand()
