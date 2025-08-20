@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../.editorconfig" />
+    <File Path="../.github/copilot-instructions.md" />
+    <File Path="../.gitignore" />
+    <File Path="../README.md" />
+    <File Path="CodeCoverage.runsettings.xml" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="SK.Rag.Application.UnitTests/SK.Rag.Application.UnitTests.csproj" />
+    <Project Path="SK.Rag.ConsoleApp.UnitTests/SK.Rag.ConsoleApp.UnitTests.csproj" />
+  </Folder>
+  <Project Path="SK.Rag.Application/SK.Rag.Application.csproj" />
+  <Project Path="SK.Rag.CommandLine.ConsoleApp/SK.Rag.CommandLine.ConsoleApp.csproj" />
+  <Project Path="SK.Rag.ConsoleApp/SK.Rag.ConsoleApp.csproj" />
+</Solution>
