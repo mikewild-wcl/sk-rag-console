@@ -91,17 +91,18 @@ public partial class ChatAction(
 
         if (parseResult.Errors.Count > 0)
         {
-            foreach (var error in parseResult.Errors)
+            foreach (var error in parseResult.Errors.Select(e => e.Message))
             {
-                _logger.LogError("Command parsing error: {ErrorMessage}", error.Message);
-                AnsiConsole.MarkupLine($"[red]Error:[/] {error.Message}");
+                _logger.LogError("Command parsing error: {ErrorMessage}", error);
+                AnsiConsole.MarkupLine($"[red]Error:[/] {error}");
             }
+
             return false;
         }
 
         if (parseResult.Tokens.Count > 0)
         {
-            var commandResult = await parseResult.InvokeAsync(cancellationToken);
+            var commandResult = await parseResult.InvokeAsync(cancellationToken: cancellationToken);
             return commandResult! >= 0;
         }
 
