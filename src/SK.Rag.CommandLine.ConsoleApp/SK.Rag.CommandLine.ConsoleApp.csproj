@@ -25,8 +25,8 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.8" />
-    <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.62.0" />
-    <PackageReference Include="Microsoft.SemanticKernel.Connectors.InMemory" Version="1.62.0-preview" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.63.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.InMemory" Version="1.63.0-preview" />
     <PackageReference Include="Spectre.Console" Version="0.50.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta7.25380.108" />
   </ItemGroup>

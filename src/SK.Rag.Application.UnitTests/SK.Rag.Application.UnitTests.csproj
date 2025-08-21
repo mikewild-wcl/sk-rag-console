@@ -36,7 +36,7 @@
     <PackageReference Include="FluentAssertions" Version="[7.2.0]" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
-    <PackageReference Include="Microsoft.SemanticKernel.Connectors.InMemory" Version="1.62.0-preview" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.InMemory" Version="1.63.0-preview" />
     <PackageReference Include="xunit.v3" Version="3.0.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
       <PrivateAssets>all</PrivateAssets>
