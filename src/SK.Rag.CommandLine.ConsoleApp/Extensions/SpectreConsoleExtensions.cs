@@ -15,19 +15,4 @@ public static class SpectreConsoleExtensions
             .Centered()
             .Color(Color.SteelBlue));
     }
-
-    public static void WriteLineWithColor(this IAnsiConsole console, string message, Color color)
-    {
-        console.MarkupLine($"[bold {color}]{message}[/]");
-    }
-
-    public static void WriteError(this IAnsiConsole console, string message)
-    {
-        console.WriteLineWithColor(message, Color.Red);
-    }
-
-    public static void WriteSuccess(this IAnsiConsole console, string message)
-    {
-        console.WriteLineWithColor(message, Color.Green);
-    }
 }
