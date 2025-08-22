@@ -145,7 +145,6 @@ public class DocumentService(
         return await Task.FromResult(count);
     }
 
-
     public async Task<IEnumerable<string>> List()
     {
         List<string> documentsList;

@@ -13,9 +13,9 @@ public static class ParseResultExtensions
         }
 
         var dir = parseResult.GetValue(Options.DirectoryOption);
-        var file = parseResult.GetValue(Options.FileOption);
-
         var files = dir?.EnumerateFiles()?.ToList() ?? [];
+
+        var file = parseResult.GetValue(Options.FileOption);
         if (file is not null)
         {
             files.Add(file);

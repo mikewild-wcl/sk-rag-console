@@ -4,9 +4,9 @@
       "commandName": "Project",
       //"commandLineArgs": "document ingest  --file \"..\\..\\..\\..\\..\\.private\\cvs\\My CV.docx\"",
       //"commandLineArgs": "document ingest --dir \"..\\..\\..\\..\\..\\.private\\cvs\" --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
-      //"commandLineArgs": "chat --dir \"..\\..\\..\\..\\..\\.private\\cvs\" --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
+      "commandLineArgs": "chat --dir \"..\\..\\..\\..\\..\\.private\\cvs\" --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
       //"commandLineArgs": "chat --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
-      "commandLineArgs": "document ingest  --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
+      //"commandLineArgs": "document ingest  --file \"..\\..\\..\\..\\..\\.private\\Resume-Sample-1-Software-Engineer.pdf\"",
       //"commandLineArgs": "chat --file \"..\\..\\..\\..\\..\\.private\\cvs\\My CV.docx\"",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

@@ -27,7 +27,7 @@ public class SearchServiceTests
     public async Task SemanticSearch_WithNullText_ShouldReturnEmptyList()
     {
         // Act
-        var results = await _searchService.SemanticSearch(null);
+        var results = await _searchService.SemanticSearch(null, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         results.Should().BeEmpty();
@@ -37,7 +37,7 @@ public class SearchServiceTests
     public async Task SemanticSearch_WithEmptyText_ShouldReturnEmptyList()
     {
         // Act
-        var results = await _searchService.SemanticSearch("");
+        var results = await _searchService.SemanticSearch("", cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         results.Should().BeEmpty();
@@ -53,7 +53,7 @@ public class SearchServiceTests
         var text = "test search";
 
         // Act
-        var results = await _searchService.SemanticSearch(text, maxResults);
+        var results = await _searchService.SemanticSearch(text, maxResults, TestContext.Current.CancellationToken);
 
         // Assert
         results.Should().NotBeNull();

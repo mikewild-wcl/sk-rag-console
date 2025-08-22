@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using SK.Rag.Application.Extensions;
 using SK.Rag.Application.Prompts;
 using SK.Rag.Application.Services.Interfaces;
@@ -35,10 +36,12 @@ public class ChatService(
 
         if (!_chatHistory.Any())
         {
-            _chatHistory.AddSystemMessage(SystemPrompts.GenAlphaSystemPrompt);
+            _chatHistory.AddSystemMessage(SystemPrompts.GenAlphaRecruiterSystemPrompt);
         }
 
-        _chatHistory.AddUserMessage(userMessage);
+        var prompt = await BuildPrompt(userMessage, cancellationToken);
+
+        _chatHistory.AddUserMessage(prompt);
 
         var promptExecutionSettings = chatCompletionService.BuildAzureOpenAIPromptExecutionSettings(0.9f);
 
@@ -56,5 +59,27 @@ public class ChatService(
         }
 
         _chatHistory.AddAssistantMessage(responses.ToString());
+    }
+
+    private async Task<string> BuildPrompt(string input, CancellationToken cancellationToken = default)
+    {
+        var queryPromptBuilder = new StringBuilder(
+        $"""
+            Respond to the user input:
+            ---
+            {input}
+            ---
+            You may use the following information:
+        """);
+
+        //TODO: Make this return IAsyncEnumerable?
+        var searchResults = await _searchService.SemanticSearch(input, cancellationToken: cancellationToken);
+        
+        foreach (var searchResult in searchResults)
+        {
+            queryPromptBuilder.Append($"---{Environment.NewLine}{searchResult.Text}");
+        }
+
+        return queryPromptBuilder.ToString();
     }
 }
